@@ -2,15 +2,13 @@ import pickle
 import os
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import DirectoryLoader
+from langchain.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
 from langchain.vectorstores import FAISS
 from dotenv import load_dotenv
 # import pandas as pd
 load_dotenv()
 
-PERSIST_DIRECTORY = 'store'
-
-loader = DirectoryLoader('./', glob="*.txt")
+loader = UnstructuredMarkdownLoader('schema.md')
 data = loader.load()
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)

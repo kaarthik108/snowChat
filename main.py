@@ -1,6 +1,6 @@
 
 import pickle
-import re
+import html
 import os
 from langchain import FAISS
 import openai
@@ -12,47 +12,52 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
 from utils import query_data_warehouse
 load_dotenv()
+from functools import lru_cache
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-with open("vectors.pkl", "rb") as f:
-    print('Loading model...')
-    vectorstore = pickle.load(f)
+# @st.cache_resource
+def load_chain():
+    with open("vectors.pkl", "rb") as f:
+        print('Loading model...')
+        vectorstore = pickle.load(f)
     
-chain = get_chain(vectorstore)
+    return get_chain(vectorstore)
+    
+chain = load_chain()
 
 st.title("snowChat")
 st.subheader("Chat with Snowflake Database")
 
-ddl_transactions = '''
-CREATE OR REPLACE TABLE TRANSACTIONS (
-    TRANSACTION_ID NUMBER(38,0) NOT NULL,
-    ORDER_ID NUMBER(38,0),
-    PRODUCT_ID NUMBER(38,0),
-    QUANTITY NUMBER(38,0),
-    PRICE NUMBER(10,2),
-    PRIMARY KEY (TRANSACTION_ID),
-    FOREIGN KEY (ORDER_ID) REFERENCES STREAM_HACKATHON.STREAMLIT.ORDER_DETAILS(ORDER_ID)
-);
-'''
+class SnowChat:
+    def __init__(self):
+        self.ddl_dict = self.load_ddls()
 
-# Add more DDLs for other tables here
-# ddl_table2 = '''...'''
-# ddl_table3 = '''...'''
+    @staticmethod
+    def load_ddls():
+        ddl_files = {
+            "TRANSACTIONS": "sql/ddl_transactions.sql",
+            "ORDER_DETAILS": "sql/ddl_orders.sql",
+            "PAYMENTS": "sql/ddl_payments.sql",
+            "PRODUCTS": "sql/ddl_products.sql",
+            "CUSTOMER_DETAILS": "sql/ddl_customer.sql"
+        }
 
-# Create a dictionary to store the table names and their corresponding DDLs
-ddl_dict = {
-    "TRANSACTIONS": ddl_transactions,
-    # "TABLE2": ddl_table2,
-    # "TABLE3": ddl_table3,
-}
+        ddl_dict = {}
+        for table_name, file_name in ddl_files.items():
+            with open(file_name, "r") as f:
+                ddl_dict[table_name] = f.read()
+                # print(f"DDL for table loaded. {ddl_dict[table_name]} ")
+        return ddl_dict
+
+snow_chat = SnowChat()
 
 # Create a sidebar with a dropdown menu
-selected_table = st.sidebar.selectbox("Select a table:", options=list(ddl_dict.keys()))
+selected_table = st.sidebar.selectbox("Select a table:", options=list(snow_chat.ddl_dict.keys()))
 
 # Display the DDL for the selected table
 st.sidebar.markdown(f"### DDL for {selected_table} table")
-st.sidebar.code(ddl_dict[selected_table], language="sql")
+st.sidebar.code(snow_chat.ddl_dict[selected_table], language="sql")
 
 st.write("""
 <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -106,6 +111,7 @@ if "stored_session" not in st.session_state:
 if 'messages' not in st.session_state:
     st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
 
+@st.cache_resource
 def extract_code(text):
     # Use OpenAI's GPT-3 to extract the SQL code
     response = openai.ChatCompletion.create(
@@ -123,17 +129,10 @@ def extract_code(text):
 
 messages_container = st.container()
 
-# Add a button inside the container to get the value of the text input widget
-# Input container
-# input_container = st.container()
-# form = st.form()
-
-# query = input_container.text_input("", key="input", placeholder="Type your query here...", label_visibility="hidden")
 with st.form(key='my_form'):
     query = st.text_input("", key="input", placeholder="Type your query here...", label_visibility="hidden")
     submit_button = st.form_submit_button(label='Submit')
 
-# messages = []
 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
@@ -151,35 +150,35 @@ if len(query) > 2 and submit_button:
         st.session_state.generated.append(result['answer'])
 
 def message(text, is_user=False, key=None, avatar_style="Adventurer"):
+    text = html.escape(text)
     if is_user:
         avatar_url = f"https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=Hoodie&clotheColor=Blue03&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
         message_alignment = "flex-end"
         message_bg_color = "linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%)"
         avatar_class = "user-avatar"
         st.write(f"""
-    <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
-        <div style="background: {message_bg_color}; color: white; border-radius: 5px; padding: 10px; margin-right: 5px; max-width: 75%;">
-            {text}
-        </div>
-                <img src="{avatar_url}" class="{avatar_class}" alt="avatar" />
+                <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
+                    <div style="background: {message_bg_color}; color: white; border-radius: 5px; padding: 10px; margin-right: 5px; max-width: 75%;">
+                        {text}
+                    </div>
+                            <img src="{avatar_url}" class="{avatar_class}" alt="avatar" />
 
-    </div>
-    """, unsafe_allow_html=True)
+                </div>
+                """, unsafe_allow_html=True)
     else:
         avatar_url = f"https://avataaars.io/?avatarStyle=Circle&topType=LongHairBun&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
         message_alignment = "flex-start"
         message_bg_color = "linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%)"
         avatar_class = "bot-avatar"
         st.write(f"""
-    <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
-        <img src="{avatar_url}" class="{avatar_class}" alt="avatar" />
-        <div style="background: {message_bg_color}; color: white; border-radius: 5px; padding: 10px; margin-right: 5px; max-width: 75%;">
-            {text}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-
+                <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
+                    <img src="{avatar_url}" class="{avatar_class}" alt="avatar" />
+                    <div style="background: {message_bg_color}; color: white; border-radius: 5px; padding: 10px; margin-right: 5px; max-width: 75%;">
+                        {text}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
 
 with messages_container:
     if st.session_state['generated']:
@@ -188,11 +187,12 @@ with messages_container:
             message(st.session_state["generated"][i], key=str(i), avatar_style="Adventurer")
             op = extract_code(st.session_state["generated"][i])
             try:
-                if len(op) > 6:
-                    print("op is", op)
-                    df = query_data_warehouse(op)
-                    st.spinner("Loading data...")
-                    st.dataframe(df)
+                if len(op) > 2:
+                    with st.spinner("In progress..."):
+                        print("op is", op)
+                        df = query_data_warehouse(op)
+                        
+                        st.dataframe(df)
             except:
                 pass
             

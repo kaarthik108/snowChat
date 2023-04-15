@@ -37,6 +37,7 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
 
     try:
         cur.execute("USE DATABASE " + os.getenv("DATABASE"))
+        cur.execute("USE SCHEMA " + os.getenv("SCHEMA"))
         cur.execute(query, parameters)
         print("executing query")
         all_rows = cur.fetchall()
