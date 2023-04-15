@@ -16,7 +16,7 @@ from functools import lru_cache
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-# @st.cache_resource
+@st.cache_resource
 def load_chain():
     with open("vectors.pkl", "rb") as f:
         print('Loading model...')
