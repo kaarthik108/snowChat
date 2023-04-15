@@ -14,7 +14,7 @@ from functools import lru_cache
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-@st.cache_resource
+# @st.cache_resource
 def load_chain():
     with open("vectors.pkl", "rb") as f:
         print('Loading model...')
@@ -109,7 +109,7 @@ if "stored_session" not in st.session_state:
 if 'messages' not in st.session_state:
     st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
 
-@st.cache_resource
+# @st.cache_resource
 def extract_code(text):
     # Use OpenAI's GPT-3 to extract the SQL code
     response = openai.ChatCompletion.create(

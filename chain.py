@@ -23,6 +23,6 @@ def get_chain(vectorstore):
     Get a chain for chatting with a vector database.
     """
     llm = ChatOpenAI(model_name='gpt-4', temperature=0.8)
-    chat_vector_db_chain = ChatVectorDBChain.from_llm(llm=llm, vectorstore=vectorstore, qa_prompt=QA_PROMPT, verbose=True)
+    chat_vector_db_chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=vectorstore.as_retriever(), qa_prompt=QA_PROMPT, verbose=True)
     
     return chat_vector_db_chain
