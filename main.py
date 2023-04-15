@@ -9,6 +9,8 @@ from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
 from utils import query_data_warehouse
+from langchain.vectorstores import FAISS
+from langchain.embeddings.openai import OpenAIEmbeddings
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -17,10 +19,9 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 
 # @st.cache_resource
 def load_chain():
-    with open(f"{current_path}/vectors.pkl", "rb") as f:
-        print('Loading model...')
-        vectorstore = pickle.load(f)
     
+    embeddings = OpenAIEmbeddings(openai_api_key = st.secrets["OPENAI_API_KEY"])
+    vectorstore = FAISS.load_local("faiss_index", embeddings)
     return get_chain(vectorstore)
     
 chain = load_chain()
