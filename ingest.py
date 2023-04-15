@@ -4,9 +4,6 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
 from langchain.vectorstores import FAISS
-from dotenv import load_dotenv
-# import pandas as pd
-load_dotenv()
 
 loader = UnstructuredMarkdownLoader('schema.md')
 data = loader.load()
@@ -14,7 +11,7 @@ data = loader.load()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 texts = text_splitter.split_documents(data)
 
-embeddings = OpenAIEmbeddings(openai_api_key = os.getenv("OPENAI_API_KEY"))
+embeddings = OpenAIEmbeddings(openai_api_key = st.secrets["OPENAI_API_KEY"])
 docsearch = FAISS.from_documents(texts, embeddings)
 
 # docsearch.save_local("faiss_index")
