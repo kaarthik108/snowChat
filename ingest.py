@@ -4,6 +4,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
 from langchain.vectorstores import FAISS
+import streamlit as st
 
 loader = UnstructuredMarkdownLoader('schema.md')
 data = loader.load()
