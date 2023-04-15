@@ -2,7 +2,6 @@
 import pickle
 import html
 import os
-from langchain import FAISS
 import openai
 import streamlit as st
 from streamlit_chat import message
@@ -10,7 +9,6 @@ from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
 from utils import query_data_warehouse
-from functools import lru_cache
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
