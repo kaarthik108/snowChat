@@ -1,3 +1,3 @@
 .env
 __pycache__/
-secret.toml
+secrets.toml
