@@ -1,7 +1,5 @@
-DATABASE: STREAM_HACKATHON
-SCHEMA: STREAMLIT
 
-tablename: CUSTOMER_DETAILS
+tablename: STREAM_HACKATHON.STREAMLIT.CUSTOMER_DETAILS
 CUSTOMER_ID: Number (38,0), not null, primary key
 FIRST_NAME: Varchar (255)
 LAST_NAME: Varchar (255)
@@ -9,25 +7,25 @@ EMAIL: Varchar (255)
 PHONE: Varchar (20)
 ADDRESS: Varchar (255)
 
-tablename: ORDER_DETAILS
+tablename: STREAM_HACKATHON.STREAMLIT.ORDER_DETAILS
 ORDER_ID: Number (38,0), not null, primary key
 CUSTOMER_ID: Number (38,0), foreign key references CUSTOMER_DETAILS(CUSTOMER_ID)
 ORDER_DATE: Date
 TOTAL_AMOUNT: Number (10,2)
 
-tablename: PAYMENTS
+tablename: STREAM_HACKATHON.STREAMLIT.PAYMENTS
 PAYMENT_ID: Number (38,0), not null, primary key
 ORDER_ID: Number (38,0), foreign key references ORDER_DETAILS(ORDER_ID)
 PAYMENT_DATE: Date
 AMOUNT: Number (10,2)
 
-tablename: PRODUCTS
+tablename: STREAM_HACKATHON.STREAMLIT.PRODUCTS
 PRODUCT_ID: Number (38,0), not null, primary key
 PRODUCT_NAME: Varchar (255)
 CATEGORY: Varchar (255)
 PRICE: Number (10,2)
 
-tablename: TRANSACTIONS
+tablename: STREAM_HACKATHON.STREAMLIT.TRANSACTIONS
 TRANSACTION_ID: Number (38,0), not null, primary key
 ORDER_ID: Number (38,0), foreign key references ORDER_DETAILS(ORDER_ID)
 PRODUCT_ID: Number (38,0)

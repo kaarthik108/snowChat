@@ -19,7 +19,7 @@ texts = text_splitter.split_documents(data)
 embeddings = OpenAIEmbeddings(openai_api_key = os.getenv("OPENAI_API_KEY"))
 docsearch = FAISS.from_documents(texts, embeddings)
 
-docsearch.save_local("faiss_index")
+# docsearch.save_local("faiss_index")
 
-# with open("vectors.pkl", "wb") as f:
-#     pickle.dump(docsearch, f)
+with open("vectors.pkl", "wb") as f:
+    pickle.dump(docsearch, f)
