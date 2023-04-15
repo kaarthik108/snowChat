@@ -12,9 +12,12 @@ from utils import query_data_warehouse
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+# get current path 
+current_path = os.path.dirname(os.path.abspath(__file__))
+
 # @st.cache_resource
 def load_chain():
-    with open("vectors.pkl", "rb") as f:
+    with open(f"{current_path}/vectors.pkl", "rb") as f:
         print('Loading model...')
         vectorstore = pickle.load(f)
     
