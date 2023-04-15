@@ -6,15 +6,13 @@ from langchain import FAISS
 import openai
 import streamlit as st
 from streamlit_chat import message
-from dotenv import load_dotenv
 from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
 from utils import query_data_warehouse
-load_dotenv()
 from functools import lru_cache
 
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 @st.cache_resource
 def load_chain():

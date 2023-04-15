@@ -1,19 +1,17 @@
 
 import os
 import snowflake.connector
-from dotenv import load_dotenv
 import pandas as pd
-
-load_dotenv()
+import streamlit as st
 
 conn = snowflake.connector.connect(
-    user=os.getenv("USER_NAME"),
-    password=os.getenv("PASSWORD"),
-    account=os.getenv("ACCOUNT"),
-    warehouse=os.getenv("WAREHOUSE"),
-    role=os.getenv("ROLE"),
-    database=os.getenv("DATABASE"),
-    schema=os.getenv("SCHEMA"),
+    user=st.secrets["USER_NAME"],
+    password=st.secrets["PASSWORD"],
+    account=st.secrets["ACCOUNT"],
+    warehouse=st.secrets["WAREHOUSE"],
+    role=st.secrets["ROLE"],
+    database=st.secrets["DATABASE"],
+    schema=st.secrets["SCHEMA"],
 )
 
 # Create a cursor object.
@@ -36,8 +34,8 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
     query = sql
 
     try:
-        cur.execute("USE DATABASE " + os.getenv("DATABASE"))
-        cur.execute("USE SCHEMA " + os.getenv("SCHEMA"))
+        cur.execute("USE DATABASE " + st.secrets["DATABASE"])
+        cur.execute("USE SCHEMA " + st.secrets["SCHEMA"])
         cur.execute(query, parameters)
         print("executing query")
         all_rows = cur.fetchall()
