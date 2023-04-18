@@ -1,8 +1,5 @@
-from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
-from langchain.callbacks.base import CallbackManager
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.chains import ConversationalRetrievalChain, ChatVectorDBChain, RetrievalQA
+from langchain.chains import RetrievalQA
 from langchain.prompts.prompt import PromptTemplate
 import streamlit as st
 
@@ -11,7 +8,7 @@ If you don't know the answer, just say "Hmm, I'm not sure. I am trained only to 
 
 Question: {question}
 {context}
-Answer:"""
+Answer:"""  # noqa: E501
 QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
 
 
@@ -19,7 +16,7 @@ def get_chain(vectorstore):
     """
     Get a chain for chatting with a vector database.
     """
-    llm = ChatOpenAI(openai_api_key = st.secrets['OPENAI_API_KEY'] ,model_name='gpt-4', temperature=0.8, streaming=True )
-    chat_vector_db_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vectorstore.as_retriever(), chain_type_kwargs={"prompt": QA_PROMPT}, return_source_documents=True)
+    llm = ChatOpenAI(openai_api_key = st.secrets['OPENAI_API_KEY'] ,model_name='gpt-4', temperature=0.8)
+    chat_vector_db_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vectorstore.as_retriever(), chain_type_kwargs={"prompt": QA_PROMPT}, return_source_documents=True)  # noqa: E501
     
     return chat_vector_db_chain
