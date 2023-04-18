@@ -1,5 +1,4 @@
 
-import pickle
 import html
 import os
 import openai
@@ -53,7 +52,7 @@ class SnowChat:
 snow_chat = SnowChat()
 
 # Display the DDL for the selected table
-st.sidebar.markdown(f''' 
+st.sidebar.markdown(''' 
 # SnowChat - Chat with Your Snowflake Data
 
 SnowChat is an intuitive and user-friendly application that allows you to interact with your Snowflake data using natural language queries. Type in your questions or requests, and SnowChat will generate the appropriate SQL query and return the data you need. No more complex SQL queries or digging through tables - SnowChat makes it easy to access your data!
@@ -99,7 +98,7 @@ def extract_code(text):
 def message(text, is_user=False, key=None, avatar_style="Adventurer"):
     text = html.escape(text)
     if is_user:
-        avatar_url = f"https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=Hoodie&clotheColor=Blue03&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+        avatar_url = "https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=Hoodie&clotheColor=Blue03&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
         message_alignment = "flex-end"
         message_bg_color = "linear-gradient(135deg, #00B2FF 0%, #006AFF 100%)"
         avatar_class = "user-avatar"
@@ -113,7 +112,7 @@ def message(text, is_user=False, key=None, avatar_style="Adventurer"):
                 </div>
                 """, unsafe_allow_html=True)
     else:
-        avatar_url = f"https://avataaars.io/?avatarStyle=Circle&topType=LongHairBun&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+        avatar_url = "https://avataaars.io/?avatarStyle=Circle&topType=LongHairBun&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
         message_alignment = "flex-start"
         message_bg_color = "#71797E"
         avatar_class = "bot-avatar"
@@ -121,8 +120,7 @@ def message(text, is_user=False, key=None, avatar_style="Adventurer"):
                 <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
                     <img src="{avatar_url}" class="{avatar_class}" alt="avatar" />
                     <div style="background: {message_bg_color}; color: white; border-radius: 20px; padding: 10px; margin-right: 5px; max-width: 75%;">
-                        {text}
-                    </div>
+                        {text} </div>
                 </div>
                 """, unsafe_allow_html=True)
 
