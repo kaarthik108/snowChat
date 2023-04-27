@@ -11,24 +11,25 @@ snowChat is an interactive chatbot that helps you access and explore data from y
 
 - Interactive and user-friendly interface
 - Integration with Snowflake Data Warehouse
-- Utilizes OpenAI's GPT technology for natural language processing
-- Supports SQL queries
+- Utilizes OpenAI's GPT-4 technology for natural language processing
 
 ## Installation
 
 1. Clone this repository:
-  git clone https://github.com/yourusername/snowchat.git
- 
+   git clone https://github.com/yourusername/snowchat.git
+
 2. Install the required packages:
-  cd snowchat
-  pip install -r requirements.txt
+   cd snowchat
+   pip install -r requirements.txt
 
+3. Set up your `OPENAI_API_KEY`, ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`and`WAREHOUSE`in`secrets.toml`.
 
-3. Set up your `OPENAI_API_KEY` and `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USERNAME`, `SNOWFLAKE_PASSWORD` secrets in a `secrets.toml` file in the project root directory.
+4. Make you're schema.md that matches you're database.
 
-4. Run the Streamlit app:
-  streamlit run main.py
-  
+5. Run `python ingest.py` to get convert to embeddings and store as an index file.
+
+6. Run the Streamlit app:
+   streamlit run main.py
 
 ## Usage
 
@@ -44,4 +45,3 @@ Feel free to contribute to this project by submitting a pull request or opening 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
