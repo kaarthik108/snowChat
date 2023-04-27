@@ -22,7 +22,7 @@ snowChat is an interactive chatbot that helps you access and explore data from y
    cd snowchat
    pip install -r requirements.txt
 
-3. Set up your `OPENAI_API_KEY`, ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`and`WAREHOUSE`in`secrets.toml`.
+3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA` and `WAREHOUSE` in project directory `secrets.toml`.
 
 4. Make you're schema.md that matches you're database.
 
