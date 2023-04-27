@@ -15,6 +15,19 @@ MAX_INPUTS = 3
 # get current path 
 current_path = os.path.dirname(os.path.abspath(__file__))
 
+st.set_page_config(
+    page_title="snowChat",
+    page_icon="❄️",
+    layout="centered",
+    initial_sidebar_state="auto",
+    menu_items={
+        'Report a bug': "https://github.com/kaarthik108/snowChat",
+        'About': '''snowChat is a chatbot designed to help you with Snowflake Database. It is built using OpenAI's GPT-4 and Streamlit. 
+            Go to the GitHub repo to learn more about the project. https://github.com/kaarthik108/snowChat 
+            '''
+}
+)
+
 @st.cache_resource
 def load_chain():
     '''
