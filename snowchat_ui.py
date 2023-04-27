@@ -2,11 +2,19 @@ import html
 import streamlit as st
 import openai
 
-@st.cache
 def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
+    '''
+    This function is used to display the messages in the chatbot UI.
+    
+    Parameters:
+    text (str): The text to be displayed.
+    is_user (bool): Whether the message is from the user or the chatbot.
+    key (str): The key to be used for the message.
+    avatar_style (str): The style of the avatar to be used.
+    '''
     text = html.escape(text)
     if is_user:
-        avatar_url = "https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=Hoodie&clotheColor=Blue03&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+        avatar_url = "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortFlat&accessoriesType=Prescription01&hairColor=Auburn&facialHairType=BeardLight&facialHairColor=Black&clotheType=Hoodie&clotheColor=PastelBlue&eyeType=Squint&eyebrowType=DefaultNatural&mouthType=Smile&skinColor=Tanned"
         message_alignment = "flex-end"
         message_bg_color = "linear-gradient(135deg, #00B2FF 0%, #006AFF 100%)"
         avatar_class = "user-avatar"
@@ -20,7 +28,7 @@ def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
                 </div>
                 """, unsafe_allow_html=True)
     else:
-        avatar_url = "https://avataaars.io/?avatarStyle=Circle&topType=LongHairBun&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+        avatar_url = "https://avataaars.io/?avatarStyle=Transparent&topType=WinterHat2&accessoriesType=Kurt&hatColor=Blue01&facialHairType=MoustacheMagnum&facialHairColor=Blonde&clotheType=Overall&clotheColor=Gray01&eyeType=WinkWacky&eyebrowType=SadConcernedNatural&mouthType=Sad&skinColor=Light"
         message_alignment = "flex-start"
         message_bg_color = "#71797E"
         avatar_class = "bot-avatar"
@@ -34,14 +42,26 @@ def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
 
 
 def reset_chat_history():
-    st.session_state['generated'] = ["WOW 🤪"]
-    st.session_state['past'] = ["Welcome to snowChat! I'm a chatbot designed to help you with Snowflake Database."]
+    '''
+    This function is used to reset the chat history.
+    '''
+    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]
+    st.session_state['past'] = ["Hi..."]
     st.session_state["stored_session"] = []
     st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
 
 
 
-def extract_code(text):
+def extract_code(text) -> str:
+    '''
+    This function is used to extract the SQL code from the user's input.
+    
+    Parameters:
+    text (str): The text to be processed.
+    
+    Returns:
+    str: The SQL code extracted from the user's input.
+    '''
     # Use OpenAI's GPT-3 to extract the SQL code
     response = openai.ChatCompletion.create(
     model='gpt-3.5-turbo',

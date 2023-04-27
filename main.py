@@ -17,6 +17,13 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 
 @st.cache_resource
 def load_chain():
+    '''
+    Load the chain from the local file system
+    
+    Returns:
+        chain (Chain): The chain object
+    
+    '''
     
     embeddings = OpenAIEmbeddings(openai_api_key = st.secrets["OPENAI_API_KEY"])
     vectorstore = FAISS.load_local("faiss_index", embeddings)
@@ -45,7 +52,7 @@ st.sidebar.code(snow_chat.ddl_dict[selected_table], language="sql")
 st.write(styles_content, unsafe_allow_html=True)
 
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = ["Hello thr, I'm a chatbot designed to help you with Snowflake Database. Shoot me a query and I'll try to answer it!"]
+    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey!"]
 if "input" not in st.session_state:
@@ -85,6 +92,16 @@ if len(query) > 2 and submit_button:
 
 @st.cache_resource
 def generate_df(op):
+    '''
+    Generate a dataframe from the query by querying the data warehouse.
+    
+    Args:
+        op (str): The query
+        
+    Returns:
+        df (pandas.DataFrame): The dataframe generated from the query
+    
+    '''
     df = query_data_warehouse(op)
     st.dataframe(df, use_container_width=True)
 
@@ -96,7 +113,7 @@ with messages_container:
             message_func(st.session_state["generated"][i], key=str(i), avatar_style="Adventurer")
             op = extract_code(st.session_state["generated"][i])
             try:
-                if len(op) > 2:
+                if len(op) > 5:
                     with st.spinner("In progress..."):
                         generate_df(op)
             except:

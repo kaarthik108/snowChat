@@ -1,8 +1,7 @@
-import pickle
-import os
+
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownTextSplitter
-from langchain.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.document_loaders import UnstructuredMarkdownLoader
 from langchain.vectorstores import FAISS
 import streamlit as st
 
