@@ -7,6 +7,9 @@
 
 snowChat is an interactive chatbot that helps you access and explore data from your Snowflake Database. It understands natural language queries and retrieves the requested information using advanced natural language processing techniques.
 
+![pika-1682575152623-1x](https://user-images.githubusercontent.com/53030784/234772753-228ad22b-3939-47a5-a4cc-c2aa7c08577a.jpeg)
+
+
 ## Features
 
 - Interactive and user-friendly interface
