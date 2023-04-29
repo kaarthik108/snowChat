@@ -75,22 +75,27 @@ if "stored_session" not in st.session_state:
 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
+    
+if "query_count" not in st.session_state:
+    st.session_state["query_count"] = 0
 
 RESET = True
 messages_container = st.container()
 
 with st.form(key='my_form'):
-    query = st.text_input("Query: ", key="input", placeholder="Type your query here...", label_visibility="hidden")
+    query = st.text_input("Query: ", key="input", value="", placeholder="Type your query here...", label_visibility="hidden")
     submit_button = st.form_submit_button(label='Submit')
-reset_button = st.button("Reset Chat History")
+col1, col2 = st.columns([1, 3.2])
+reset_button = col1.button("Reset Chat History")
 
-if len(st.session_state['past']) >= MAX_INPUTS and not RESET:
+if reset_button or st.session_state['query_count'] >= MAX_INPUTS and RESET:
+    RESET = False
+    st.session_state['query_count'] = 0
+    reset_chat_history()
+
+if len(st.session_state['past']) == MAX_INPUTS and RESET:
     st.warning("You have reached the maximum number of inputs. The chat history will be cleared after the next input.")
 
-if reset_button:
-    RESET = False
-    reset_chat_history()
-    
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
 
@@ -98,6 +103,8 @@ if len(query) > 2 and submit_button:
     with st.spinner("generating..."):
         messages = st.session_state['messages']
         result = chain({"query": query})
+        st.session_state['query_count'] += 1
+        print(st.session_state['query_count'])
         messages.append((query, result["result"]))
         # print("relevant doc: ", result['source_documents'])
         st.session_state.past.append(query)
@@ -121,7 +128,6 @@ def generate_df(op):
 with messages_container:
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])):
-            print("for loop i is", i)
             message_func(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="Adventurer")
             message_func(st.session_state["generated"][i], key=str(i), avatar_style="Adventurer")
             op = extract_code(st.session_state["generated"][i])
@@ -132,6 +138,7 @@ with messages_container:
             except:
                 pass
             
+col2.markdown(f'<div style="line-height: 2.5;">{st.session_state["query_count"]}/{MAX_INPUTS}</div>', unsafe_allow_html=True)
 
 # Create a custom div for the input container
 st.markdown('<div id="input-container-placeholder"></div>', unsafe_allow_html=True)

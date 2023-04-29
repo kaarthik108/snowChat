@@ -1,4 +1,13 @@
 class SnowChat:
+    '''
+    SnowChat class loads DDL files for various tables in a database.
+    
+    Attributes:
+        ddl_dict (dict): dictionary of DDL files for various tables in a database.
+        
+    Methods:
+        load_ddls: loads DDL files for various tables in a database.
+    '''
     def __init__(self):
         self.ddl_dict = self.load_ddls()
 

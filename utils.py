@@ -1,5 +1,3 @@
-
-import os
 import snowflake.connector
 import pandas as pd
 import streamlit as st
@@ -23,8 +21,6 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
     """
     Executes snowflake sql query and returns result as data as dataframe.
     Example of parameters
-    {"order_date": '2022-07-13', "customer_region": 1} can be used to reference variable in sql query %(order_date)s
-     and %(customer_region)s.
     :param sql: sql query to be executed
     :param parameters: named parameters used in the sql query (defaulted as None)
     :return: dataframe
@@ -40,11 +36,13 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
         print("executing query")
         all_rows = cur.fetchall()
         field_names = [i[0] for i in cur.description]
+        
+    except Exception as e:
+        return e
+    
     finally:
         print("closing cursor")
 
     df = pd.DataFrame(all_rows)
     df.columns = field_names
     return df
-
-# query_data_warehouse("SELECT * FROM STREAMLIT.CUSTOMER_DETAILS")

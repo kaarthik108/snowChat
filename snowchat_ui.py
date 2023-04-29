@@ -51,7 +51,7 @@ def reset_chat_history():
     st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
 
 
-
+# can be removed with better prompt
 def extract_code(text) -> str:
     '''
     This function is used to extract the SQL code from the user's input.
