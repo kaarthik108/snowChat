@@ -2,3 +2,5 @@
 __pycache__/
 secrets.toml
 .ruff_cache
+
+archived_logs/

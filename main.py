@@ -5,10 +5,10 @@ import streamlit as st
 from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
-from utils import query_data_warehouse
+from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
-from snowddl import Snowddl
-from snowchat_ui import reset_chat_history, extract_code, message_func
+from utils.snowddl import Snowddl
+from utils.snowchat_ui import reset_chat_history, extract_code, message_func
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 MAX_INPUTS = 3

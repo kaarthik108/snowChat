@@ -29,3 +29,6 @@ jobs:
     - name: Start Streamlit app
       run: |
         streamlit run main.py
+    - name: Run tests
+      run: |
+        pytest test.py
