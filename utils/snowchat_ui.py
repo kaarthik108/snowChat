@@ -1,8 +1,7 @@
-import html
 import streamlit as st
 import openai
 
-def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
+def message_func(text, is_user=False):
     '''
     This function is used to display the messages in the chatbot UI.
     
@@ -12,7 +11,6 @@ def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
     key (str): The key to be used for the message.
     avatar_style (str): The style of the avatar to be used.
     '''
-    text = html.escape(text)
     if is_user:
         avatar_url = "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortFlat&accessoriesType=Prescription01&hairColor=Auburn&facialHairType=BeardLight&facialHairColor=Black&clotheType=Hoodie&clotheColor=PastelBlue&eyeType=Squint&eyebrowType=DefaultNatural&mouthType=Smile&skinColor=Tanned"
         message_alignment = "flex-end"
@@ -62,6 +60,8 @@ def extract_code(text) -> str:
     Returns:
     str: The SQL code extracted from the user's input.
     '''
+    if len(text) < 5:
+        return
     # Use OpenAI's GPT-3 to extract the SQL code
     response = openai.ChatCompletion.create(
     model='gpt-3.5-turbo',

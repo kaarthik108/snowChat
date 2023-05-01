@@ -1,5 +1,4 @@
 
-import os
 import openai
 import streamlit as st
 from chain import get_chain
@@ -12,8 +11,6 @@ from utils.snowchat_ui import reset_chat_history, extract_code, message_func
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 MAX_INPUTS = 3
-# get current path 
-current_path = os.path.dirname(os.path.abspath(__file__))
 
 st.set_page_config(
     page_title="snowChat",
@@ -46,7 +43,7 @@ chain = load_chain()
 snow_ddl = Snowddl()
 
 st.title("snowChat")
-st.caption("Chat with your Snowflake Data")
+st.caption("Talk your way through data")
 
 with open("ui/sidebar.md", "r") as sidebar_file:
     sidebar_content = sidebar_file.read()
@@ -104,7 +101,6 @@ if len(query) > 2 and submit_button:
         messages = st.session_state['messages']
         result = chain({"query": query})
         st.session_state['query_count'] += 1
-        print(st.session_state['query_count'])
         messages.append((query, result["result"]))
         # print("relevant doc: ", result['source_documents'])
         st.session_state.past.append(query)
@@ -128,8 +124,8 @@ def generate_df(op):
 with messages_container:
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])):
-            message_func(st.session_state['past'][i], is_user=True, key=str(i) + '_user')  
-            message_func(st.session_state["generated"][i], key=str(i))
+            message_func(st.session_state['past'][i], is_user=True)  
+            message_func(st.session_state["generated"][i])
             op = extract_code(st.session_state["generated"][i])
             try:
                 if len(op) > 5:

@@ -33,7 +33,6 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
         cur.execute("USE DATABASE " + st.secrets["DATABASE"])
         cur.execute("USE SCHEMA " + st.secrets["SCHEMA"])
         cur.execute(query, parameters)
-        print("executing query")
         all_rows = cur.fetchall()
         field_names = [i[0] for i in cur.description]
         

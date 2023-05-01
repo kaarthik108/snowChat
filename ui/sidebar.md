@@ -1,4 +1,4 @@
-# snowChat - Chat with Your Snowflake Data
+# snowChat - Chat with you're Snowflake Data
 
 SnowChat is an intuitive and user-friendly application that allows you to interact with your Snowflake data using natural language queries. Type in your questions or requests, and SnowChat will generate the appropriate SQL query and return the data you need. No more complex SQL queries or digging through tables - SnowChat makes it easy to access your data!
 
