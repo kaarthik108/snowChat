@@ -26,7 +26,7 @@ def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
                             <img src="{avatar_url}" class="{avatar_class}" alt="avatar" />
 
                 </div>
-                """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)  # noqa: E501
     else:
         avatar_url = "https://avataaars.io/?avatarStyle=Transparent&topType=WinterHat2&accessoriesType=Kurt&hatColor=Blue01&facialHairType=MoustacheMagnum&facialHairColor=Blonde&clotheType=Overall&clotheColor=Gray01&eyeType=WinkWacky&eyebrowType=SadConcernedNatural&mouthType=Sad&skinColor=Light"
         message_alignment = "flex-start"
@@ -38,17 +38,17 @@ def message_func(text, is_user=False, key=None, avatar_style="Adventurer"):
                     <div style="background: {message_bg_color}; color: white; border-radius: 20px; padding: 10px; margin-right: 5px; max-width: 75%;">
                         {text} \n </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)  # noqa: E501
 
 
 def reset_chat_history():
     '''
     This function is used to reset the chat history.
     '''
-    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]
+    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]  # noqa: E501
     st.session_state['past'] = ["Hi..."]
     st.session_state["stored_session"] = []
-    st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
+    st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]  # noqa: E501
 
 
 # can be removed with better prompt
@@ -66,7 +66,7 @@ def extract_code(text) -> str:
     response = openai.ChatCompletion.create(
     model='gpt-3.5-turbo',
     messages=[
-        {'role': 'user', 'content': f"Extract only the code do not add text or any apostrophes or any sql keywords \n\n{text}"},
+        {'role': 'user', 'content': f"Extract only the code do not add text or any apostrophes or any sql keywords \n\n{text}"},  # noqa: E501
     ],
     # stream=True  # this time, we set stream=True
     )

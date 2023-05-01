@@ -16,7 +16,7 @@ def get_chain(vectorstore):
     """
     Get a chain for chatting with a vector database.
     """
-    llm = ChatOpenAI(openai_api_key = st.secrets['OPENAI_API_KEY'] ,model_name='gpt-4', temperature=0.08)
+    llm = ChatOpenAI(openai_api_key = st.secrets['OPENAI_API_KEY'] ,model_name='gpt-4', temperature=0.08)  # noqa: E501
     chat_vector_db_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vectorstore.as_retriever(), chain_type_kwargs={"prompt": QA_PROMPT}, return_source_documents=True)  # noqa: E501
     
     return chat_vector_db_chain
