@@ -7,7 +7,7 @@
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://snowchat.streamlit.app/)
 
-snowChat is an interactive chatbot that helps you access and explore data from your Snowflake Database. It understands natural language queries and retrieves the requested information using the mighty GPT-4.
+**snowChat** is an interactive chatbot that helps you access and explore data from your Snowflake Database. It understands natural language queries and retrieves the requested information using the mighty GPT-4.
 
 ![pika-1682575152623-1x](https://user-images.githubusercontent.com/53030784/234772753-228ad22b-3939-47a5-a4cc-c2aa7c08577a.jpeg)
 
@@ -45,10 +45,10 @@ snowChat is an interactive chatbot that helps you access and explore data from y
 
 ## 🚀 Additional Enhancements
 
-1. Automation: Create a generalized script that retrieves schema information from Snowflake automatically.
-2. Platform Integration: Connect snowChat with popular communication platforms like Slack or Discord for seamless interaction.
-3. Voice Integration: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
-4. Advanced Analytics: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
+1. **Automation**: Create a generalized script that retrieves schema information from Snowflake automatically.
+2. **Platform Integration**: Connect snowChat with popular communication platforms like Slack or Discord for seamless interaction.
+3. **Voice Integration**: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
+4. **Advanced Analytics**: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
 
 ## 🤝 Contributing
 
