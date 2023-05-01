@@ -28,14 +28,8 @@ jobs:
         pip install flake8 pylint streamlit
         pip install -r requirements.txt
 
-    - name: Lint with flake8
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    - name: Lint with pylint
-      run: |
-        pylint --disable=R,C,W1203,W1309 main.py
+    - name: Lint with ruff
+      uses: chartboost/ruff-action@v1
 
     - name: Test streamlit run
       run: |
