@@ -7,7 +7,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
 from utils import query_data_warehouse
 from langchain.vectorstores import FAISS
-from snowchat import SnowChat
+from snowddl import Snowddl
 from snowchat_ui import reset_chat_history, extract_code, message_func
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -43,7 +43,7 @@ def load_chain():
     return get_chain(vectorstore)
     
 chain = load_chain()
-snow_chat = SnowChat()
+snow_ddl = Snowddl()
 
 st.title("snowChat")
 st.caption("Chat with your Snowflake Data")
@@ -58,9 +58,9 @@ with open("ui/styles.md", "r") as styles_file:
 st.sidebar.markdown(sidebar_content)
                     
 # Create a sidebar with a dropdown menu
-selected_table = st.sidebar.selectbox("Select a table:", options=list(snow_chat.ddl_dict.keys()))
+selected_table = st.sidebar.selectbox("Select a table:", options=list(snow_ddl.ddl_dict.keys()))
 st.sidebar.markdown(f"### DDL for {selected_table} table")
-st.sidebar.code(snow_chat.ddl_dict[selected_table], language="sql")
+st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 
 st.write(styles_content, unsafe_allow_html=True)
 
@@ -128,8 +128,8 @@ def generate_df(op):
 with messages_container:
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])):
-            message_func(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="Adventurer")
-            message_func(st.session_state["generated"][i], key=str(i), avatar_style="Adventurer")
+            message_func(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+            message_func(st.session_state["generated"][i], key=str(i))
             op = extract_code(st.session_state["generated"][i])
             try:
                 if len(op) > 5:

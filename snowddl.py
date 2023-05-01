@@ -1,6 +1,6 @@
-class SnowChat:
+class Snowddl:
     '''
-    SnowChat class loads DDL files for various tables in a database.
+    Snowddl class loads DDL files for various tables in a database.
     
     Attributes:
         ddl_dict (dict): dictionary of DDL files for various tables in a database.
