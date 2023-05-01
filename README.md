@@ -1,4 +1,4 @@
-# snowChat 🗨️❄️
+# snowChat 💬❄️
 
 [![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
@@ -7,17 +7,18 @@
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://snowchat.streamlit.app/)
 
-snowChat is an interactive chatbot that helps you access and explore data from your Snowflake Database. It understands natural language queries and retrieves the requested information using advanced natural language processing techniques.
+snowChat is an interactive chatbot that helps you access and explore data from your Snowflake Database. It understands natural language queries and retrieves the requested information using the mighty GPT-4.
 
 ![pika-1682575152623-1x](https://user-images.githubusercontent.com/53030784/234772753-228ad22b-3939-47a5-a4cc-c2aa7c08577a.jpeg)
 
-## Features
+## 🌟 Features
 
 - Interactive and user-friendly interface
 - Integration with Snowflake Data Warehouse
-- Utilizes OpenAI's GPT-4 technology for natural language processing
+- Utilizes OpenAI's GPT-4 (Text-to-SQL)
+- Uses In-memory Vector Database FAISS for storing and searching through vectors
 
-## Installation
+## 🛠️ Installation
 
 1. Clone this repository:
    git clone https://github.com/yourusername/snowchat.git
@@ -32,20 +33,27 @@ snowChat is an interactive chatbot that helps you access and explore data from y
 
 5. Run `python ingest.py` to get convert to embeddings and store as an index file.
 
-6. Run the Streamlit app:
+6. Run the Streamlit app to start chatting:
    streamlit run main.py
 
-## Usage
+## 📚 Usage
 
 1. Launch the app by visiting the URL provided by Streamlit.
 2. Type your query in natural language or SQL format in the input box.
 3. Press "Submit" to generate the response.
 4. The chatbot will generate a response based on your query and display the result, including any relevant data or SQL code.
 
-## Contributing
+## 🚀 Additional Enhancements
+
+1. Automation: Create a generalized script that retrieves schema information from Snowflake automatically.
+2. Platform Integration: Connect snowChat with popular communication platforms like Slack or Discord for seamless interaction.
+3. Voice Integration: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
+4. Advanced Analytics: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
+
+## 🤝 Contributing
 
 Feel free to contribute to this project by submitting a pull request or opening an issue. Your feedback and suggestions are greatly appreciated!
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
