@@ -15,7 +15,7 @@
 
 - Interactive and user-friendly interface
 - Integration with Snowflake Data Warehouse
-- Utilizes OpenAI's GPT-4 (Text-to-SQL)
+- Utilizes OpenAI's GPT-4 and text-embedding-ada-002
 - Uses In-memory Vector Database FAISS for storing and searching through vectors
 
 ## 🛠️ Installation
@@ -27,7 +27,7 @@
    cd snowchat
    pip install -r requirements.txt
 
-3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA` and `WAREHOUSE` in project directory `secrets.toml`.
+3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA` and `WAREHOUSE` in project directory `secrets.toml`. If you don't have access to GPT-4 change the script in chain.py replace gpt-4 in model_name to gpt-3.5-turbo
 
 4. Make you're schema.md that matches you're database.
 
