@@ -26,9 +26,6 @@ jobs:
     - name: Install chromedriver
       run: |
         seleniumbase install chromedriver latest
-    - name: Start Streamlit app
-      run: |
-        streamlit run main.py
     - name: Run tests
       run: |
         pytest test.py
