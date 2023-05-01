@@ -8,7 +8,7 @@ If you don't know the answer, just say "Hmm, I'm not sure. I am trained only to 
 
 Question: {question}
 {context}
-Answer:"""  # noqa: E501
+Answer:"""  
 QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
 
 
@@ -16,7 +16,7 @@ def get_chain(vectorstore):
     """
     Get a chain for chatting with a vector database.
     """
-    llm = ChatOpenAI(openai_api_key = st.secrets['OPENAI_API_KEY'] ,model_name='gpt-4', temperature=0.08)  # noqa: E501
-    chat_vector_db_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vectorstore.as_retriever(), chain_type_kwargs={"prompt": QA_PROMPT}, return_source_documents=True)  # noqa: E501
+    llm = ChatOpenAI(openai_api_key = st.secrets['OPENAI_API_KEY'] ,model_name='gpt-4', temperature=0.08)  
+    chat_vector_db_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vectorstore.as_retriever(), chain_type_kwargs={"prompt": QA_PROMPT}, return_source_documents=True)  
     
     return chat_vector_db_chain

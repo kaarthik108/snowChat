@@ -24,7 +24,7 @@ st.set_page_config(
         'Report a bug': "https://github.com/kaarthik108/snowChat",
         'About': '''snowChat is a chatbot designed to help you with Snowflake Database. It is built using OpenAI's GPT-4 and Streamlit. 
             Go to the GitHub repo to learn more about the project. https://github.com/kaarthik108/snowChat 
-            '''  # noqa: E501
+            '''  
 }
 )
 
@@ -58,14 +58,14 @@ with open("ui/styles.md", "r") as styles_file:
 st.sidebar.markdown(sidebar_content)
                     
 # Create a sidebar with a dropdown menu
-selected_table = st.sidebar.selectbox("Select a table:", options=list(snow_ddl.ddl_dict.keys()))  # noqa: E501
+selected_table = st.sidebar.selectbox("Select a table:", options=list(snow_ddl.ddl_dict.keys()))  
 st.sidebar.markdown(f"### DDL for {selected_table} table")
 st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 
 st.write(styles_content, unsafe_allow_html=True)
 
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]  # noqa: E501
+    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]  
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey!"]
 if "input" not in st.session_state:
@@ -74,7 +74,7 @@ if "stored_session" not in st.session_state:
     st.session_state["stored_session"] = []
 
 if 'messages' not in st.session_state:
-    st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]  # noqa: E501
+    st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]  
     
 if "query_count" not in st.session_state:
     st.session_state["query_count"] = 0
@@ -83,7 +83,7 @@ RESET = True
 messages_container = st.container()
 
 with st.form(key='my_form'):
-    query = st.text_input("Query: ", key="input", value="", placeholder="Type your query here...", label_visibility="hidden")  # noqa: E501
+    query = st.text_input("Query: ", key="input", value="", placeholder="Type your query here...", label_visibility="hidden")  
     submit_button = st.form_submit_button(label='Submit')
 col1, col2 = st.columns([1, 3.2])
 reset_button = col1.button("Reset Chat History")
@@ -94,7 +94,7 @@ if reset_button or st.session_state['query_count'] >= MAX_INPUTS and RESET:
     reset_chat_history()
 
 if len(st.session_state['past']) == MAX_INPUTS and RESET:
-    st.warning("You have reached the maximum number of inputs. The chat history will be cleared after the next input.")  # noqa: E501
+    st.warning("You have reached the maximum number of inputs. The chat history will be cleared after the next input.")  
 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
@@ -128,7 +128,7 @@ def generate_df(op):
 with messages_container:
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])):
-            message_func(st.session_state['past'][i], is_user=True, key=str(i) + '_user')  # noqa: E501
+            message_func(st.session_state['past'][i], is_user=True, key=str(i) + '_user')  
             message_func(st.session_state["generated"][i], key=str(i))
             op = extract_code(st.session_state["generated"][i])
             try:
@@ -138,7 +138,7 @@ with messages_container:
             except:  # noqa: E722
                 pass
             
-col2.markdown(f'<div style="line-height: 2.5;">{st.session_state["query_count"]}/{MAX_INPUTS}</div>', unsafe_allow_html=True)  # noqa: E501
+col2.markdown(f'<div style="line-height: 2.5;">{st.session_state["query_count"]}/{MAX_INPUTS}</div>', unsafe_allow_html=True)  
 
 # Create a custom div for the input container
 st.markdown('<div id="input-container-placeholder"></div>', unsafe_allow_html=True)
@@ -155,6 +155,6 @@ components.v1.html(
         document.getElementById("input").focus();
     });
     </script>
-    """,  # noqa: E501
+    """,  
     height=0,
 )
