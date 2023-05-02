@@ -107,18 +107,18 @@ if len(query) > 2 and submit_button:
         st.session_state.generated.append(result['result'])
 
 @st.cache_resource
-def generate_df(op):
+def generate_df(to_extract: str):
     '''
     Generate a dataframe from the query by querying the data warehouse.
     
     Args:
-        op (str): The query
+        to_extract (str): The query
         
     Returns:
         df (pandas.DataFrame): The dataframe generated from the query
     
     '''
-    df = query_data_warehouse(op)
+    df = query_data_warehouse(to_extract)
     st.dataframe(df, use_container_width=True)
 
 with messages_container:
@@ -126,20 +126,19 @@ with messages_container:
         for i in range(len(st.session_state['generated'])):
             message_func(st.session_state['past'][i], is_user=True)  
             message_func(st.session_state["generated"][i])
-            op = extract_code(st.session_state["generated"][i])
-            try:
-                if len(op) > 5:
-                    with st.spinner("In progress..."):
-                        generate_df(op)
-            except:  # noqa: E722
-                pass
+            if i > 0:
+                code = extract_code(st.session_state["generated"][i])
+                try:
+                    if len(code) > 5:
+                        with st.spinner("In progress..."):
+                            generate_df(code)
+                except:  # noqa: E722
+                    pass
             
 col2.markdown(f'<div style="line-height: 2.5;">{st.session_state["query_count"]}/{MAX_INPUTS}</div>', unsafe_allow_html=True)  
 
-# Create a custom div for the input container
 st.markdown('<div id="input-container-placeholder"></div>', unsafe_allow_html=True)
 
-# Move the input container to the custom div using JavaScript
 components.v1.html(
     """
     <script>

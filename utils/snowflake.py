@@ -24,11 +24,11 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
     :param sql: sql query to be executed
     :param parameters: named parameters used in the sql query (defaulted as None)
     :return: dataframe
-    """
+    """    
     if parameters is None:
         parameters = {}
     query = sql
-
+    
     try:
         cur.execute("USE DATABASE " + st.secrets["DATABASE"])
         cur.execute("USE SCHEMA " + st.secrets["SCHEMA"])

@@ -62,13 +62,13 @@ def extract_code(text) -> str:
     '''
     if len(text) < 5:
         return
-    # Use OpenAI's GPT-3 to extract the SQL code
+    # Use OpenAI's GPT-3.5 to extract the SQL code
     response = openai.ChatCompletion.create(
     model='gpt-3.5-turbo',
     messages=[
         {'role': 'user', 'content': f"Extract only the code do not add text or any apostrophes or any sql keywords \n\n{text}"},  
     ],
-    # stream=True  # this time, we set stream=True
+    # stream=True
     )
 
     # Extract the SQL code from the response
