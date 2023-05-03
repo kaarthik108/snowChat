@@ -1,5 +1,6 @@
 import streamlit as st
 import openai
+import re
 
 def message_func(text, is_user=False):
     '''
@@ -61,7 +62,7 @@ def extract_code(text) -> str:
     str: The SQL code extracted from the user's input.
     '''
     if len(text) < 5:
-        return
+        return None
     # Use OpenAI's GPT-3.5 to extract the SQL code
     response = openai.ChatCompletion.create(
     model='gpt-3.5-turbo',
@@ -75,3 +76,26 @@ def extract_code(text) -> str:
     sql_code = response.choices[0].message.content
 
     return sql_code
+
+def is_sql_query(text: str) -> bool:
+    """
+    Checks if the input text is likely an SQL query.
+
+    :param text: input text
+    :return: True if the input is likely an SQL query, False otherwise
+    """
+    # Define a list of common SQL keywords
+    keywords = [
+        "SELECT", "FROM", "WHERE", "UPDATE", "INSERT", "DELETE", "JOIN",
+        "GROUP BY", "ORDER BY", "HAVING", "LIMIT", "OFFSET", "UNION", "CREATE",
+        "ALTER", "DROP", "TRUNCATE", "EXPLAIN", "WITH"
+    ]
+
+    # Create a single regular expression pattern to search for all keywords
+    pattern = r'\b(?:' + '|'.join(keywords) + r')\b'
+
+    # Check if any of the keywords are present in the input text (case-insensitive)
+    if re.search(pattern, text, re.IGNORECASE):
+        return True
+
+    return False

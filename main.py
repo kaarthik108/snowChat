@@ -7,10 +7,11 @@ from streamlit import components
 from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
 from utils.snowddl import Snowddl
-from utils.snowchat_ui import reset_chat_history, extract_code, message_func
+from utils.snowchat_ui import reset_chat_history, extract_code, message_func, is_sql_query
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 MAX_INPUTS = 3
+chat_history = []
 
 st.set_page_config(
     page_title="snowChat",
@@ -21,24 +22,24 @@ st.set_page_config(
         'Report a bug': "https://github.com/kaarthik108/snowChat",
         'About': '''snowChat is a chatbot designed to help you with Snowflake Database. It is built using OpenAI's GPT-4 and Streamlit. 
             Go to the GitHub repo to learn more about the project. https://github.com/kaarthik108/snowChat 
-            '''  
-}
+            '''
+    }
 )
 
 @st.cache_resource
 def load_chain():
     '''
     Load the chain from the local file system
-    
+
     Returns:
         chain (Chain): The chain object
-    
+
     '''
-    
-    embeddings = OpenAIEmbeddings(openai_api_key = st.secrets["OPENAI_API_KEY"])
+
+    embeddings = OpenAIEmbeddings(openai_api_key=st.secrets["OPENAI_API_KEY"])
     vectorstore = FAISS.load_local("faiss_index", embeddings)
     return get_chain(vectorstore)
-    
+
 chain = load_chain()
 snow_ddl = Snowddl()
 
@@ -53,16 +54,18 @@ with open("ui/styles.md", "r") as styles_file:
 
 # Display the DDL for the selected table
 st.sidebar.markdown(sidebar_content)
-                    
+
 # Create a sidebar with a dropdown menu
-selected_table = st.sidebar.selectbox("Select a table:", options=list(snow_ddl.ddl_dict.keys()))  
+selected_table = st.sidebar.selectbox(
+    "Select a table:", options=list(snow_ddl.ddl_dict.keys()))
 st.sidebar.markdown(f"### DDL for {selected_table} table")
 st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 
 st.write(styles_content, unsafe_allow_html=True)
 
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = ["Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]  
+    st.session_state['generated'] = [
+        "Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey!"]
 if "input" not in st.session_state:
@@ -71,8 +74,9 @@ if "stored_session" not in st.session_state:
     st.session_state["stored_session"] = []
 
 if 'messages' not in st.session_state:
-    st.session_state['messages'] = [("Hello! I'm a chatbot designed to help you with Snowflake Database.")]  
-    
+    st.session_state['messages'] = [
+        ("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
+
 if "query_count" not in st.session_state:
     st.session_state["query_count"] = 0
 
@@ -80,7 +84,8 @@ RESET = True
 messages_container = st.container()
 
 with st.form(key='my_form'):
-    query = st.text_input("Query: ", key="input", value="", placeholder="Type your query here...", label_visibility="hidden")  
+    query = st.text_input("Query: ", key="input", value="",
+                          placeholder="Type your query here...", label_visibility="hidden")
     submit_button = st.form_submit_button(label='Submit')
 col1, col2 = st.columns([1, 3.2])
 reset_button = col1.button("Reset Chat History")
@@ -90,54 +95,76 @@ if reset_button or st.session_state['query_count'] >= MAX_INPUTS and RESET:
     st.session_state['query_count'] = 0
     reset_chat_history()
 
-if len(st.session_state['past']) == MAX_INPUTS and RESET:
-    st.warning("You have reached the maximum number of inputs. The chat history will be cleared after the next input.")  
-
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
 
-if len(query) > 2 and submit_button:
-    with st.spinner("generating..."):
-        messages = st.session_state['messages']
-        result = chain({"query": query})
-        st.session_state['query_count'] += 1
-        messages.append((query, result["result"]))
-        # print("relevant doc: ", result['source_documents'])
-        st.session_state.past.append(query)
-        st.session_state.generated.append(result['result'])
+def update_progress_bar(value, prefix, progress_bar=None):
+    if progress_bar is None:
+        progress_bar = st.empty()
 
-@st.cache_resource
+    st.session_state[f'{prefix}_progress_bar_value'] = value
+    progress_bar.progress(st.session_state[f'{prefix}_progress_bar_value'])
+    if value == 100:
+        st.session_state[f'{prefix}_progress_bar_value'] = 0
+        progress_bar.empty()
+
+if len(query) > 2 and submit_button:
+    submit_progress_bar = st.empty()
+    messages = st.session_state['messages']
+    update_progress_bar(33, 'submit', submit_progress_bar)
+
+    result = chain(
+
+        {"question": query, "chat_history": chat_history}
+
+    )
+    # print("result -----",result)
+    update_progress_bar(66, 'submit', submit_progress_bar)
+    chat_history.append((result["question"], result["answer"]))
+    st.session_state['query_count'] += 1
+    messages.append((query, result["answer"]))
+    st.session_state.past.append(query)
+    st.session_state.generated.append(result['answer'])
+    update_progress_bar(100, 'submit', submit_progress_bar)
+
+
 def generate_df(to_extract: str):
     '''
     Generate a dataframe from the query by querying the data warehouse.
-    
+
     Args:
         to_extract (str): The query
-        
+
     Returns:
         df (pandas.DataFrame): The dataframe generated from the query
-    
+
     '''
     df = query_data_warehouse(to_extract)
     st.dataframe(df, use_container_width=True)
 
+
 with messages_container:
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])):
-            message_func(st.session_state['past'][i], is_user=True)  
+            message_func(st.session_state['past'][i], is_user=True)
             message_func(st.session_state["generated"][i])
-            if i > 0:
+            if i > 0 and is_sql_query(st.session_state["generated"][i]):
                 code = extract_code(st.session_state["generated"][i])
                 try:
                     if len(code) > 5:
-                        with st.spinner("In progress..."):
-                            generate_df(code)
+                        generate_df(code)
                 except:  # noqa: E722
                     pass
-            
-col2.markdown(f'<div style="line-height: 2.5;">{st.session_state["query_count"]}/{MAX_INPUTS}</div>', unsafe_allow_html=True)  
 
-st.markdown('<div id="input-container-placeholder"></div>', unsafe_allow_html=True)
+if st.session_state['query_count'] == MAX_INPUTS and RESET:
+    st.warning(
+        "You have reached the maximum number of inputs. The chat history will be cleared after the next input.")
+
+col2.markdown(
+    f'<div style="line-height: 2.5;">{st.session_state["query_count"]}/{MAX_INPUTS}</div>', unsafe_allow_html=True)
+
+st.markdown('<div id="input-container-placeholder"></div>',
+            unsafe_allow_html=True)
 
 components.v1.html(
     """
@@ -150,6 +177,6 @@ components.v1.html(
         document.getElementById("input").focus();
     });
     </script>
-    """,  
+    """,
     height=0,
 )
