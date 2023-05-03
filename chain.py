@@ -36,7 +36,7 @@ def get_chain(vectorstore):
     llm = OpenAI(temperature=0.08, openai_api_key=st.secrets["OPENAI_API_KEY"], model_name='gpt-3.5-turbo')
     
     streaming_llm = OpenAI(
-        model_name='gpt-3.5-turbo',
+        model_name='gpt-4',
         streaming=True, # Not working yet
         callback_manager=CallbackManager([
             StreamingStdOutCallbackHandler()
