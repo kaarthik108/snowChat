@@ -102,10 +102,14 @@ def update_progress_bar(value, prefix, progress_bar=None):
     if progress_bar is None:
         progress_bar = st.empty()
 
-    st.session_state[f'{prefix}_progress_bar_value'] = value
-    progress_bar.progress(st.session_state[f'{prefix}_progress_bar_value'])
+    key = f'{prefix}_progress_bar_value'
+    if key not in st.session_state:
+        st.session_state[key] = 0
+
+    st.session_state[key] = value
+    progress_bar.progress(st.session_state[key])
     if value == 100:
-        st.session_state[f'{prefix}_progress_bar_value'] = 0
+        st.session_state[key] = 0
         progress_bar.empty()
 
 if len(query) > 2 and submit_button:
