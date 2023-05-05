@@ -155,7 +155,7 @@ with messages_container:
             if i > 0 and is_sql_query(st.session_state["generated"][i]):
                 code = extract_code(st.session_state["generated"][i])
                 try:
-                    if len(code) > 5:
+                    if code:
                         generate_df(code)
                 except:  # noqa: E722
                     pass

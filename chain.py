@@ -37,7 +37,7 @@ def get_chain(vectorstore):
     
     streaming_llm = OpenAI(
         model_name='gpt-4',
-        streaming=True, # Not working yet
+        streaming=False, # Not working yet
         callback_manager=CallbackManager([
             StreamingStdOutCallbackHandler()
         ]),
