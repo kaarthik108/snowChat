@@ -9,7 +9,7 @@ from callback import (
 from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
-# from utils.snowflake import query_data_warehouse
+from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
 from utils.snowddl import Snowddl
 from utils.snowchat_ui import reset_chat_history, extract_code, message_func, is_sql_query
@@ -142,19 +142,19 @@ if len(query) > 2 and submit_button:
     asyncio.run( make_query())
 
 
-# def generate_df(to_extract: str):
-#     '''
-#     Generate a dataframe from the query by querying the data warehouse.
+def generate_df(to_extract: str):
+    '''
+    Generate a dataframe from the query by querying the data warehouse.
 
-#     Args:
-#         to_extract (str): The query
+    Args:
+        to_extract (str): The query
 
-#     Returns:
-#         df (pandas.DataFrame): The dataframe generated from the query
+    Returns:
+        df (pandas.DataFrame): The dataframe generated from the query
 
-#     '''
-#     df = query_data_warehouse(to_extract)
-#     st.dataframe(df, use_container_width=True)
+    '''
+    df = query_data_warehouse(to_extract)
+    st.dataframe(df, use_container_width=True)
 
 
 with messages_container:
@@ -164,11 +164,11 @@ with messages_container:
             message_func(st.session_state["generated"][i])
             if i > 0 and is_sql_query(st.session_state["generated"][i]):
                 code = extract_code(st.session_state["generated"][i])
-                # try:
-                #     if code:
-                #         generate_df(code)
-                # except:  # noqa: E722
-                #     pass
+                try:
+                    if code:
+                        generate_df(code)
+                except:  # noqa: E722
+                    pass
 
 if st.session_state['query_count'] == MAX_INPUTS and RESET:
     st.warning(
