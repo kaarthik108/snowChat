@@ -1,15 +1,17 @@
 
 import asyncio
+import random
 import openai
 import streamlit as st
 from callback import (
     QuestionGenCallbackHandler,
-    StreamingLLMCallbackHandler
+    StreamingLLMCallbackHandler,
+    type_effect
 )
 from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
-from utils.snowflake import query_data_warehouse
+# from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
 from utils.snowddl import Snowddl
 from utils.snowchat_ui import reset_chat_history, extract_code, message_func, is_sql_query
@@ -45,11 +47,6 @@ def load_chain(_question_handler ,_stream_handler):
     vectorstore = FAISS.load_local("faiss_index", embeddings)
     return get_chain(vectorstore, stream_handler=_stream_handler, question_handler=_question_handler)
 
-# Instantiate callback handlers
-_question_handler = QuestionGenCallbackHandler()
-_stream_handler = StreamingLLMCallbackHandler()
-
-chain = load_chain(_question_handler ,_stream_handler)
 snow_ddl = Snowddl()
 
 st.title("snowChat")
@@ -72,9 +69,28 @@ st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 
 st.write(styles_content, unsafe_allow_html=True)
 
+placeholder = st.empty()
+placeholder.text('placeholder')
+
+response_placeholder=st.empty()
+response_placeholder.text('')
+
+# Instantiate callback handlers
+_question_handler = QuestionGenCallbackHandler()
+_stream_handler = StreamingLLMCallbackHandler(response_placeholder)
+
+chain = load_chain(_question_handler ,_stream_handler)
+
+    
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = [
-        "Hey there, I'm Snowman ☃️ , your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]
+    st.session_state['generated'] = ['','response_placeholder']
+    intro_text = '''
+    Hey there, I'm Snowman ☃️ , your SQL-speaking sidekick, ready to chat up Snowflake
+    and fetch answers faster than a snowball fight in summer! ❄️🔍'''
+
+    with placeholder:
+        asyncio.run(type_effect(intro_text, placeholder))
+
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey!"]
 if "input" not in st.session_state:
@@ -121,14 +137,20 @@ def update_progress_bar(value, prefix, progress_bar=None):
         st.session_state[key] = 0
         progress_bar.empty()
 
-async def make_query():
+async def make_query(response_placeholder):
+    response_placeholder.text('')
+    placeholder.text(st.session_state['generated'][0])
     submit_progress_bar = st.empty()
     messages = st.session_state['messages']
     update_progress_bar(33, 'submit', submit_progress_bar)
 
+    _stream_handler.reset_block(response_placeholder)
+    
     result = await chain.acall(
         {"question": query, "chat_history": chat_history}
     )
+    print(_stream_handler.async_text_memory)
+    st.session_state['generated'][1] = result["answer"]
     # print("result -----",result)
     update_progress_bar(66, 'submit', submit_progress_bar)
     chat_history.append((result["question"], result["answer"]))
@@ -139,36 +161,49 @@ async def make_query():
     update_progress_bar(100, 'submit', submit_progress_bar)
 
 if len(query) > 2 and submit_button:
-    asyncio.run( make_query())
+    asyncio.run( make_query(response_placeholder) )
 
 
-def generate_df(to_extract: str):
-    '''
-    Generate a dataframe from the query by querying the data warehouse.
+# def generate_df(to_extract: str):
+#     '''
+#     Generate a dataframe from the query by querying the data warehouse.
 
-    Args:
-        to_extract (str): The query
+#     Args:
+#         to_extract (str): The query
 
-    Returns:
-        df (pandas.DataFrame): The dataframe generated from the query
+#     Returns:
+#         df (pandas.DataFrame): The dataframe generated from the query
 
-    '''
-    df = query_data_warehouse(to_extract)
-    st.dataframe(df, use_container_width=True)
+#     '''
+#     df = query_data_warehouse(to_extract)
+#     st.dataframe(df, use_container_width=True)
+if st.session_state['generated']:
+    response_placeholder.text('response_placeholder')
+    placeholder.text(st.session_state['generated'][0])
+    for i in range(1,len(st.session_state['generated'])):
+        response_placeholder.text(st.session_state['generated'][1])
 
+# with messages_container:
+#     if st.session_state['generated']:
+#         response_placeholder.text('response_placeholder')
+#         placeholder.text(st.session_state['generated'][0])
+#         for i in range(1,len(st.session_state['generated'])):
+#             response_placeholder.text(st.session_state['generated'][1])
+        # i = len(st.session_state["generated"]) - 1
+        # if i >= 0:
+        #     message_func(st.session_state["generated"][i])
+        
+        # j = len(st.session_state['past']) - 1
+        # if j >= 0:
+        #     message_func(st.session_state['past'][j], is_user=True)
 
-with messages_container:
-    if st.session_state['generated']:
-        for i in range(len(st.session_state['generated'])):
-            message_func(st.session_state['past'][i], is_user=True)
-            message_func(st.session_state["generated"][i])
-            if i > 0 and is_sql_query(st.session_state["generated"][i]):
-                code = extract_code(st.session_state["generated"][i])
-                try:
-                    if code:
-                        generate_df(code)
-                except:  # noqa: E722
-                    pass
+            # if i > 0 and is_sql_query(st.session_state["generated"][i]):
+                # code = extract_code(st.session_state["generated"][i])
+                # try:
+                #     if code:
+                #         generate_df(code)
+                # except:  # noqa: E722
+                #     pass
 
 if st.session_state['query_count'] == MAX_INPUTS and RESET:
     st.warning(
