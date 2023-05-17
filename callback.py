@@ -7,7 +7,7 @@ from langchain.callbacks.base import (
 import streamlit as st
 from typing import Any, Dict, List
 
-from utils.snowchat_ui import message_func
+from utils.snowchat_ui import format_response, message_func
 
 class StreamingLLMCallbackHandler(AsyncCallbackHandler):
     """Callback handler for streaming LLM responses."""
@@ -39,13 +39,7 @@ class StreamingLLMCallbackHandler(AsyncCallbackHandler):
         print(token, end ="")
         
         self.async_text_memory+=token
-        if (self.ended_sql_portion):
-            self.effective_text_len += 1
-            if self.effective_text_len%20 == 0:
-                self.async_text_memory+='\n'
-        if ';' in token:
-            self.ended_sql_portion = True
-        self.placeholder.text(self.async_text_memory)
+        self.placeholder.text(format_response(self.async_text_memory))
 
 class QuestionGenCallbackHandler(AsyncCallbackHandler):
     """Callback handler for question generation."""

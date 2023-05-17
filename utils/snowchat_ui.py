@@ -99,3 +99,22 @@ def is_sql_query(text: str) -> bool:
         return True
 
     return False
+
+LINE_BREAK_POINT_LIMIT = 70
+def format_response(text: str) -> str:
+    """
+    Reformats a GPT response to fit within a size limit
+    """
+    if ";" in text:
+        sql_index_end = text.index(';')
+        if (sql_index_end):
+            for i in range(sql_index_end, len(text)):
+                if (i-sql_index_end)%LINE_BREAK_POINT_LIMIT == 0 and i > 0:
+                    print('--------------------------------------')
+                    print(text[:i+1])
+                    j = text[:i].rfind(' ')
+                    print(f'i: {i}\tj: {j}')
+                    text = text[0:j]+'\n'+text[j:].lstrip()
+                    i = j
+    return text
+    

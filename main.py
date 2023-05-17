@@ -14,7 +14,7 @@ from streamlit import components
 # from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
 from utils.snowddl import Snowddl
-from utils.snowchat_ui import reset_chat_history, extract_code, message_func, is_sql_query
+from utils.snowchat_ui import format_response, reset_chat_history, extract_code, message_func, is_sql_query
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 MAX_INPUTS = 3
@@ -70,10 +70,13 @@ st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 st.write(styles_content, unsafe_allow_html=True)
 
 placeholder = st.empty()
-placeholder.text('placeholder')
+placeholder.text('')
 
 response_placeholder=st.empty()
 response_placeholder.text('')
+
+responses = []
+responses.append(response_placeholder)
 
 # Instantiate callback handlers
 _question_handler = QuestionGenCallbackHandler()
@@ -83,7 +86,7 @@ chain = load_chain(_question_handler ,_stream_handler)
 
     
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = ['','response_placeholder']
+    st.session_state['generated'] = ['','']
     intro_text = '''
     Hey there, I'm Snowman ☃️ , your SQL-speaking sidekick, ready to chat up Snowflake
     and fetch answers faster than a snowball fight in summer! ❄️🔍'''
@@ -138,7 +141,6 @@ def update_progress_bar(value, prefix, progress_bar=None):
         progress_bar.empty()
 
 async def make_query(response_placeholder):
-    response_placeholder.text('')
     placeholder.text(st.session_state['generated'][0])
     submit_progress_bar = st.empty()
     messages = st.session_state['messages']
@@ -149,8 +151,12 @@ async def make_query(response_placeholder):
     result = await chain.acall(
         {"question": query, "chat_history": chat_history}
     )
+
+    
     print(_stream_handler.async_text_memory)
-    st.session_state['generated'][1] = result["answer"]
+
+
+    st.session_state['generated'][1] = format_response(result["answer"])
     # print("result -----",result)
     update_progress_bar(66, 'submit', submit_progress_bar)
     chat_history.append((result["question"], result["answer"]))
@@ -178,7 +184,7 @@ if len(query) > 2 and submit_button:
 #     df = query_data_warehouse(to_extract)
 #     st.dataframe(df, use_container_width=True)
 if st.session_state['generated']:
-    response_placeholder.text('response_placeholder')
+    response_placeholder.text('')
     placeholder.text(st.session_state['generated'][0])
     for i in range(1,len(st.session_state['generated'])):
         response_placeholder.text(st.session_state['generated'][1])
