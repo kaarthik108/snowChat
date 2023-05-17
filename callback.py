@@ -39,7 +39,7 @@ class StreamingLLMCallbackHandler(AsyncCallbackHandler):
         print(token, end ="")
         
         self.async_text_memory+=token
-        self.placeholder.text(format_response(self.async_text_memory))
+        self.placeholder.text(self.async_text_memory)
 
 class QuestionGenCallbackHandler(AsyncCallbackHandler):
     """Callback handler for question generation."""

@@ -75,8 +75,8 @@ placeholder.text('')
 response_placeholder=st.empty()
 response_placeholder.text('')
 
-responses = []
-responses.append(response_placeholder)
+# responses = []
+# responses.append(response_placeholder)
 
 # Instantiate callback handlers
 _question_handler = QuestionGenCallbackHandler()
@@ -141,6 +141,8 @@ def update_progress_bar(value, prefix, progress_bar=None):
         progress_bar.empty()
 
 async def make_query(response_placeholder):
+    st.session_state['generated'][1] = ""
+    response_placeholder.text('')
     placeholder.text(st.session_state['generated'][0])
     submit_progress_bar = st.empty()
     messages = st.session_state['messages']
@@ -156,7 +158,7 @@ async def make_query(response_placeholder):
     print(_stream_handler.async_text_memory)
 
 
-    st.session_state['generated'][1] = format_response(result["answer"])
+    st.session_state['generated'][1] = result["answer"]
     # print("result -----",result)
     update_progress_bar(66, 'submit', submit_progress_bar)
     chat_history.append((result["question"], result["answer"]))
