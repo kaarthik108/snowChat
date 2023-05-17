@@ -7,58 +7,68 @@ from langchain.chains import (
 )
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
+from langchain.callbacks.base import (
+    AsyncCallbackHandler, 
+    AsyncCallbackManager
+)
 import streamlit as st
+from langchain.chat_models import ChatOpenAI
 
 template = """Considering the provided chat history and a subsequent question, rewrite the follow-up question to be an independent query. Alternatively, conclude the conversation if it appears to be complete.
-Chat History:\"""
+Chat History:
 {chat_history}
-\"""
 Follow Up Input: \"""
 {question}
 \"""
 Standalone question:"""
- 
-condense_question_prompt = PromptTemplate.from_template(template)
 
-TEMPLATE = """ You're a senior SQL developer. You have to write sql code in snowflake database based on the following question. Also you have to ignore the sql keywords and give a one or two sentences about how did you arrive at that sql code. display the sql code in the code format (do not assume anything if the column is not available then say it is not available, do not make up code).
+template = """Considering the provided chat history and a subsequent question, rewrite the follow-up question to be an independent query. Alternatively, conclude the conversation if it appears to be complete.
+
+Chat History:
+{chat_history}
+Follow Up Input: {question}
+Standalone question:"""
+ 
+CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(template)
+
+prompt_template = """ You're a senior SQL developer. You have to write sql code in snowflake database based on the following question. Also you have to ignore the sql keywords and give a one or two sentences about how did you arrive at that sql code. display the sql code in the code format (do not assume anything if the column is not available then say it is not available, do not make up code).
 If you don't know the answer, just say "Hmm, I'm not sure. I am trained only to answer sql related queries. Please try again." Don't try to make up an answer.
 
 Question: {question}
 {context}
 Answer:"""  
-QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
+STREAMING_TEXT_PROMPT = PromptTemplate(template=prompt_template, input_variables=["question", "context"])
 
 
-def get_chain(vectorstore):
-    """
-    Get a chain for chatting with a vector database.
-    """
-    llm = OpenAI(temperature=0.08, openai_api_key=st.secrets["OPENAI_API_KEY"], model_name='gpt-3.5-turbo')
-    
+def get_chain(vectorstore, question_handler, stream_handler):
+    ## Async Managers
+    manager = AsyncCallbackManager([])
+    question_manager = AsyncCallbackManager([question_handler])
+    stream_manager = AsyncCallbackManager([stream_handler])
+
+    ## LLM Models
+    question_gen_llm = OpenAI(
+        temperature=0,
+        verbose=True,
+        callback_manager=question_manager,
+    )
     streaming_llm = OpenAI(
-        model_name='gpt-4',
-        streaming=False, # Not working yet
-        callback_manager=CallbackManager([
-            StreamingStdOutCallbackHandler()
-        ]),
-        max_tokens=500,
-        temperature=0.08,
-        openai_api_key=st.secrets["OPENAI_API_KEY"]
+        streaming=True,
+        callback_manager=stream_manager,
+        verbose=True,
+        temperature=0,
     )
-    
     question_generator = LLMChain(
-        llm=llm,
-        prompt=condense_question_prompt
+        llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT, callback_manager=manager
     )
-    
     doc_chain = load_qa_chain(
-        llm=streaming_llm,
-        chain_type="stuff",
-        prompt=QA_PROMPT
+        streaming_llm, chain_type="stuff", prompt=STREAMING_TEXT_PROMPT, callback_manager=manager
     )
+
     chain = ConversationalRetrievalChain(
-                retriever=vectorstore.as_retriever(),
-                combine_docs_chain=doc_chain,
-                question_generator=question_generator
-                )
+        retriever=vectorstore.as_retriever(),
+        combine_docs_chain=doc_chain,
+        question_generator=question_generator,
+        callback_manager=manager,
+    )
     return chain
