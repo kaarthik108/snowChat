@@ -90,9 +90,7 @@ if 'generated' not in st.session_state:
     intro_text = '''
     Hey there, I'm Snowman ☃️ , your SQL-speaking sidekick, ready to chat up Snowflake
     and fetch answers faster than a snowball fight in summer! ❄️🔍'''
-
-    with placeholder:
-        asyncio.run(type_effect(intro_text, placeholder))
+    placeholder.text(intro_text)
 
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey!"]
@@ -147,17 +145,10 @@ async def make_query(response_placeholder):
     submit_progress_bar = st.empty()
     messages = st.session_state['messages']
     update_progress_bar(33, 'submit', submit_progress_bar)
-
     _stream_handler.reset_block(response_placeholder)
-    
     result = await chain.acall(
         {"question": query, "chat_history": chat_history}
     )
-
-    
-    print(_stream_handler.async_text_memory)
-
-
     st.session_state['generated'][1] = result["answer"]
     # print("result -----",result)
     update_progress_bar(66, 'submit', submit_progress_bar)
@@ -170,7 +161,6 @@ async def make_query(response_placeholder):
 
 if len(query) > 2 and submit_button:
     asyncio.run( make_query(response_placeholder) )
-
 
 # def generate_df(to_extract: str):
 #     '''
@@ -185,6 +175,7 @@ if len(query) > 2 and submit_button:
 #     '''
 #     df = query_data_warehouse(to_extract)
 #     st.dataframe(df, use_container_width=True)
+
 if st.session_state['generated']:
     response_placeholder.text('')
     placeholder.text(st.session_state['generated'][0])
