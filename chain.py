@@ -1,64 +1,49 @@
 from langchain.prompts.prompt import PromptTemplate
-from langchain.callbacks.base import CallbackManager
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import (
-    ConversationalRetrievalChain,
-    LLMChain
+    RetrievalQA
 )
-from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
+from langchain.memory import ConversationBufferMemory
 import streamlit as st
 
-template = """Considering the provided chat history and a subsequent question, rewrite the follow-up question to be an independent query. Alternatively, conclude the conversation if it appears to be complete.
-Chat History:\"""
-{chat_history}
-\"""
-Follow Up Input: \"""
-{question}
-\"""
-Standalone question:"""
- 
-condense_question_prompt = PromptTemplate.from_template(template)
-
-TEMPLATE = """ You're a senior SQL developer. You have to write sql code in snowflake database based on the following question. Also you have to ignore the sql keywords and give a one or two sentences about how did you arrive at that sql code. display the sql code in the code format (do not assume anything if the column is not available then say it is not available, do not make up code).
+TEMPLATE = """ You're a senior SQL developer. You have to write sql code in snowflake database based on the following question. Give a one or two sentences about how did you arrive at that sql code. display the sql code in the SQL code format (do not assume anything if the column is not available, do not make up code). ALSO if you are asked to FIX the sql code, then look what was the error and try to fix that by searching the schema definition.
 If you don't know the answer, just say "Hmm, I'm not sure. I am trained only to answer sql related queries. Please try again." Don't try to make up an answer.
+
+{history}
 
 Question: {question}
 {context}
-Answer:"""  
-QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
+SQL: ```sql ``` \n
+Explanation: """
+QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["history", "question", "context"])
+
+chain_type_kwargs = {"prompt": QA_PROMPT,
+                     "memory": ConversationBufferMemory(
+                        memory_key="history",
+                        input_key="question"), 
+                    }
 
 
 def get_chain(vectorstore):
     """
     Get a chain for chatting with a vector database.
     """
-    llm = OpenAI(temperature=0.08, openai_api_key=st.secrets["OPENAI_API_KEY"], model_name='gpt-3.5-turbo')
     
     streaming_llm = OpenAI(
-        model_name='gpt-4',
+        model_name='gpt-3.5-turbo',
         streaming=False, # Not working yet
-        callback_manager=CallbackManager([
-            StreamingStdOutCallbackHandler()
-        ]),
-        max_tokens=500,
-        temperature=0.08,
+        # callback_manager=CallbackManager([
+        #     StreamingStdOutCallbackHandler()
+        # ]),
+        max_tokens=1000,
+        temperature=0.1,
         openai_api_key=st.secrets["OPENAI_API_KEY"]
     )
     
-    question_generator = LLMChain(
-        llm=llm,
-        prompt=condense_question_prompt
-    )
-    
-    doc_chain = load_qa_chain(
-        llm=streaming_llm,
-        chain_type="stuff",
-        prompt=QA_PROMPT
-    )
-    chain = ConversationalRetrievalChain(
+    chain = RetrievalQA.from_chain_type(
+                llm=streaming_llm,
+                chain_type="stuff",
                 retriever=vectorstore.as_retriever(),
-                combine_docs_chain=doc_chain,
-                question_generator=question_generator
+                chain_type_kwargs=chain_type_kwargs,
                 )
     return chain

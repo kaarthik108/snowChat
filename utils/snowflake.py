@@ -36,7 +36,8 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
         all_rows = cur.fetchall()
         field_names = [i[0] for i in cur.description]
         
-    except Exception as e:
+    except snowflake.connector.errors.ProgrammingError as e:
+        # print(f"Error in query_data_warehouse: {e}")
         return e
     
     finally:

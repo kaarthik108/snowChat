@@ -1,6 +1,7 @@
 
 import openai
 import streamlit as st
+import warnings
 from chain import get_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from streamlit import components
@@ -8,9 +9,11 @@ from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
 from utils.snowddl import Snowddl
 from utils.snowchat_ui import reset_chat_history, extract_code, message_func, is_sql_query
+from snowflake.connector.errors import ProgrammingError
+warnings.filterwarnings('ignore')
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
-MAX_INPUTS = 3
+MAX_INPUTS = 1
 chat_history = []
 
 st.set_page_config(
@@ -26,7 +29,6 @@ st.set_page_config(
     }
 )
 
-@st.cache_resource
 def load_chain():
     '''
     Load the chain from the local file system
@@ -112,27 +114,65 @@ def update_progress_bar(value, prefix, progress_bar=None):
         st.session_state[key] = 0
         progress_bar.empty()
 
+
+def execute_chain(query):
+    '''
+    Execute the chain and handle error recovery.
+    
+    Args:
+        query (str): The query to be executed
+
+    Returns:
+        chain_result (dict): The result of the chain execution
+
+    '''
+    chain_result = None
+    try:
+        chain_result = chain(query)
+    except Exception as error:
+        print("error", error)
+        # Handle error using self_heal mechanism
+    return chain_result
+
 if len(query) > 2 and submit_button:
     submit_progress_bar = st.empty()
     messages = st.session_state['messages']
     update_progress_bar(33, 'submit', submit_progress_bar)
 
-    result = chain(
+    result = execute_chain(query)
 
-        {"question": query, "chat_history": chat_history}
-
-    )
-    # print("result -----",result)
     update_progress_bar(66, 'submit', submit_progress_bar)
-    chat_history.append((result["question"], result["answer"]))
     st.session_state['query_count'] += 1
-    messages.append((query, result["answer"]))
+    messages.append((query, result["result"]))
     st.session_state.past.append(query)
-    st.session_state.generated.append(result['answer'])
+    st.session_state.generated.append(result['result'])
     update_progress_bar(100, 'submit', submit_progress_bar)
 
+def self_heal(df, to_extract, i):
+    '''
+    If the query fails, try to fix it by extracting the code from the error message and running it again.
+    
+    Args:
+        df (pandas.DataFrame): The dataframe generated from the query
+        to_extract (str): The query
+        i (int): The index of the query in the chat history
+        
+    Returns:
+        df (pandas.DataFrame): The dataframe generated from the query
 
-def generate_df(to_extract: str):
+    '''
+    
+    error_message = str(df)
+    error_message = "I have an SQL query that's causing an error. FIX The SQL query by searching the schema definition:  \n```sql\n" + to_extract + "\n```\n Error message: \n " + error_message
+    recover = execute_chain(error_message)
+    message_func(recover['result'])
+    to_extract = extract_code(recover['result'])
+    st.session_state["generated"][i] = recover['result']
+    if is_sql_query(to_extract):
+        df = query_data_warehouse(to_extract)
+    return df
+
+def generate_df(to_extract: str, i: int):
     '''
     Generate a dataframe from the query by querying the data warehouse.
 
@@ -144,6 +184,10 @@ def generate_df(to_extract: str):
 
     '''
     df = query_data_warehouse(to_extract)
+    if isinstance(df, ProgrammingError) and is_sql_query(to_extract):
+        message_func("uh oh, I made an error, let me try to fix it")
+        del st.session_state["generated"][i]
+        df = self_heal(df, to_extract, i)
     st.dataframe(df, use_container_width=True)
 
 
@@ -155,8 +199,8 @@ with messages_container:
             if i > 0 and is_sql_query(st.session_state["generated"][i]):
                 code = extract_code(st.session_state["generated"][i])
                 try:
-                    if code:
-                        generate_df(code)
+                    if is_sql_query(code):
+                        generate_df(code, i)
                 except:  # noqa: E722
                     pass
 
