@@ -42,7 +42,6 @@ def load_chain():
     vectorstore = FAISS.load_local("faiss_index", embeddings)
     return get_chain(vectorstore)
 
-chain = load_chain()
 snow_ddl = Snowddl()
 
 st.title("snowChat")
@@ -114,38 +113,21 @@ def update_progress_bar(value, prefix, progress_bar=None):
         st.session_state[key] = 0
         progress_bar.empty()
 
+chain = load_chain()
 
-def execute_chain(query):
-    '''
-    Execute the chain and handle error recovery.
-    
-    Args:
-        query (str): The query to be executed
-
-    Returns:
-        chain_result (dict): The result of the chain execution
-
-    '''
-    chain_result = None
-    try:
-        chain_result = chain(query)
-    except Exception as error:
-        print("error", error)
-        # Handle error using self_heal mechanism
-    return chain_result
 
 if len(query) > 2 and submit_button:
     submit_progress_bar = st.empty()
     messages = st.session_state['messages']
     update_progress_bar(33, 'submit', submit_progress_bar)
 
-    result = execute_chain(query)
+    result = chain({"question": query, "chat_history": chat_history})
 
     update_progress_bar(66, 'submit', submit_progress_bar)
     st.session_state['query_count'] += 1
-    messages.append((query, result["result"]))
+    messages.append((query, result["answer"]))
     st.session_state.past.append(query)
-    st.session_state.generated.append(result['result'])
+    st.session_state.generated.append(result['answer'])
     update_progress_bar(100, 'submit', submit_progress_bar)
 
 def self_heal(df, to_extract, i):
@@ -164,12 +146,13 @@ def self_heal(df, to_extract, i):
     
     error_message = str(df)
     error_message = "I have an SQL query that's causing an error. FIX The SQL query by searching the schema definition:  \n```sql\n" + to_extract + "\n```\n Error message: \n " + error_message
-    recover = execute_chain(error_message)
-    message_func(recover['result'])
-    to_extract = extract_code(recover['result'])
-    st.session_state["generated"][i] = recover['result']
+    recover = chain({"question": error_message, "chat_history": ""})
+    message_func(recover['answer'])
+    to_extract = extract_code(recover['answer'])
+    st.session_state["generated"][i] = recover['answer']
     if is_sql_query(to_extract):
         df = query_data_warehouse(to_extract)
+    
     return df
 
 def generate_df(to_extract: str, i: int):

@@ -1,6 +1,27 @@
 import streamlit as st
 import openai
 import re
+import html
+
+def format_message(text):
+    '''
+    This function is used to format the messages in the chatbot UI.
+
+    Parameters:
+    text (str): The text to be formatted.
+    '''
+    text_blocks = re.split(r"```[\s\S]*?```", text)
+    code_blocks = re.findall(r"```([\s\S]*?)```", text)
+
+    text_blocks = [html.escape(block) for block in text_blocks]
+
+    formatted_text = ""
+    for i in range(len(text_blocks)):
+        formatted_text += text_blocks[i].replace("\n", "<br>")
+        if i < len(code_blocks):
+            formatted_text += f'<pre style="white-space: pre-wrap; word-wrap: break-word;"><code>{html.escape(code_blocks[i])}</code></pre>'
+
+    return formatted_text
 
 def message_func(text, is_user=False):
     '''
@@ -27,6 +48,7 @@ def message_func(text, is_user=False):
                 </div>
                 """, unsafe_allow_html=True)  
     else:
+        text = format_message(text)
         avatar_url = "https://avataaars.io/?avatarStyle=Transparent&topType=WinterHat2&accessoriesType=Kurt&hatColor=Blue01&facialHairType=MoustacheMagnum&facialHairColor=Blonde&clotheType=Overall&clotheColor=Gray01&eyeType=WinkWacky&eyebrowType=SadConcernedNatural&mouthType=Sad&skinColor=Light"
         message_alignment = "flex-start"
         message_bg_color = "#71797E"
