@@ -17,7 +17,7 @@
 
 - Interactive and user-friendly interface
 - Integration with Snowflake Data Warehouse
-- Utilizes OpenAI's GPT-4 and text-embedding-ada-002
+- Utilizes OpenAI's GPT-3.5-turbo-16k and text-embedding-ada-002
 - Uses In-memory Vector Database FAISS for storing and searching through vectors
 
 ## 🛠️ Installation
