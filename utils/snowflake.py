@@ -24,22 +24,22 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
     :param sql: sql query to be executed
     :param parameters: named parameters used in the sql query (defaulted as None)
     :return: dataframe
-    """    
+    """
     if parameters is None:
         parameters = {}
     query = sql
-    
+
     try:
         cur.execute("USE DATABASE " + st.secrets["DATABASE"])
         cur.execute("USE SCHEMA " + st.secrets["SCHEMA"])
         cur.execute(query, parameters)
         all_rows = cur.fetchall()
         field_names = [i[0] for i in cur.description]
-        
+
     except snowflake.connector.errors.ProgrammingError as e:
         # print(f"Error in query_data_warehouse: {e}")
         return e
-    
+
     finally:
         print("closing cursor")
 

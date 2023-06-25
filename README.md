@@ -4,6 +4,7 @@
 [![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![OpenAI](https://img.shields.io/badge/-OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.com/)
 [![Snowflake](https://img.shields.io/badge/-Snowflake-29BFFF?style=flat-square&logo=snowflake&logoColor=white)](https://www.snowflake.com/en/)
+[![Supabase](https://img.shields.io/badge/-Supabase-00C04A?style=flat-square&logo=supabase&logoColor=white)](https://www.supabase.io/)
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://snowchat.streamlit.app/)
 
@@ -18,7 +19,7 @@
 - Interactive and user-friendly interface
 - Integration with Snowflake Data Warehouse
 - Utilizes OpenAI's GPT-3.5-turbo-16k and text-embedding-ada-002
-- Uses In-memory Vector Database FAISS for storing and searching through vectors
+- Uses Supabase PG-vector Vector Database for storing and searching through vectors
 
 ## 🛠️ Installation
 
@@ -29,13 +30,15 @@
    cd snowchat
    pip install -r requirements.txt
 
-3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA` and `WAREHOUSE` in project directory `secrets.toml`. If you don't have access to GPT-4 change the script in chain.py replace gpt-4 in model_name to gpt-3.5-turbo
+3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`,  `WAREHOUSE`, `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` in project directory `secrets.toml`.
 
-4. Make you're schema.md that matches you're database.
+4. Make you're schemas and store them in docs folder that matches you're database.
 
-5. Run `python ingest.py` to get convert to embeddings and store as an index file.
+5. Create supabase extention, table and function from the supabase/scripts.sql.
 
-6. Run the Streamlit app to start chatting:
+6. Run `python ingest.py` to get convert to embeddings and store as an index file.
+
+7. Run the Streamlit app to start chatting:
    streamlit run main.py
 
 ## 📚 Usage
