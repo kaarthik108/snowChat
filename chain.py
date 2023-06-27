@@ -15,7 +15,9 @@ Standalone question:"""
 
 condense_question_prompt = PromptTemplate.from_template(template)
 
-TEMPLATE = """ You're a helpful AI assistant who is specialized in data analysis using SQL. You have to write sql code in snowflake database based on the following question. Give a one or two sentences about how did you arrive at that sql code. (do not assume anything if the column is not available then say it is not available, do not make up code). Write the sql code in markdown format.
+TEMPLATE = """ You're an AI assistant specializing in data analysis with Snowflake SQL. Based on the question provided, you must generate SQL code that is compatible with the Snowflake environment. Additionally, offer a brief explanation about how you arrived at the SQL code. If the required column isn't explicitly stated in the context, suggest an alternative using available columns, but do not assume the existence of any not mentioned. 
+
+Write the SQL code in markdown format.
 
 Question: {question}
 {context}
@@ -34,12 +36,14 @@ def get_chain(vectorstore):
         temperature=0,
         openai_api_key=st.secrets["OPENAI_API_KEY"],
         model_name="gpt-3.5-turbo-16k",
+        max_tokens=500,
     )
 
     llm = OpenAI(
-        model_name="gpt-3.5-turbo",
+        model_name="gpt-3.5-turbo-16k",
         temperature=0,
         openai_api_key=st.secrets["OPENAI_API_KEY"],
+        max_tokens=1000,
     )
 
     question_generator = LLMChain(llm=q_llm, prompt=condense_question_prompt)

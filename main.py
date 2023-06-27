@@ -202,7 +202,6 @@ def generate_df(to_extract: str, i: int):
     df = query_data_warehouse(to_extract)
     if isinstance(df, ProgrammingError) and is_sql_query(to_extract):
         message_func("uh oh, I made an error, let me try to fix it")
-        del st.session_state["generated"][i]
         df = self_heal(df, to_extract, i)
     st.dataframe(df, use_container_width=True)
 
