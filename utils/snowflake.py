@@ -10,6 +10,7 @@ conn = snowflake.connector.connect(
     role=st.secrets["ROLE"],
     database=st.secrets["DATABASE"],
     schema=st.secrets["SCHEMA"],
+    client_session_keep_alive=True
 )
 
 # Create a cursor object.
