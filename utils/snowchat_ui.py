@@ -3,14 +3,6 @@ import streamlit as st
 import re
 import html
 
-INITIAL_MESSAGE = [
-    {"role": "user", "content": "Hi!"},
-    {
-        "role": "assistant",
-        "content": "Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍",
-    },
-]
-
 
 def format_message(text):
     """

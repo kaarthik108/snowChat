@@ -3,7 +3,7 @@ import re
 import warnings
 
 from chain import load_chain
-from utils.snowchat_ui import INITIAL_MESSAGE, message_func
+from utils.snowchat_ui import message_func
 from utils.snowddl import Snowddl
 from snowflake.snowpark.exceptions import SnowparkSQLException
 
@@ -13,6 +13,14 @@ snow_ddl = Snowddl()
 
 st.title("snowChat")
 st.caption("Talk your way through data")
+
+INITIAL_MESSAGE = [
+    {"role": "user", "content": "Hi!"},
+    {
+        "role": "assistant",
+        "content": "Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍",
+    },
+]
 
 with open("ui/sidebar.md", "r") as sidebar_file:
     sidebar_content = sidebar_file.read()
@@ -32,11 +40,9 @@ st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 
 # Add a reset button
 if st.sidebar.button("Reset Chat"):
-    st.cache_resource.clear()
-    st.cache_data.clear()
     for key in st.session_state.keys():
         del st.session_state[key]
-    st.session_state["messages"] = INITIAL_MESSAGE.copy()
+    st.session_state["messages"] = INITIAL_MESSAGE
     st.session_state["history"] = []
 
 st.write(styles_content, unsafe_allow_html=True)
@@ -107,9 +113,7 @@ def execute_sql(query, conn, retries=2):
 if st.session_state.messages[-1]["role"] != "assistant":
     content = st.session_state.messages[-1]["content"]
     if isinstance(content, str):
-        result = chain({"question": content, "chat_history": ""})[
-            "answer"
-        ]
+        result = chain({"question": content, "chat_history": st.session_state['history']})["answer"]
         append_message(result)
         if get_sql(result):
             df = execute_sql(get_sql(result), conn)
