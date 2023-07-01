@@ -1,12 +1,12 @@
 import streamlit as st
 
-from pydantic import BaseModel
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import SupabaseVectorStore
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import DirectoryLoader
 from supabase.client import Client, create_client
 from typing import Any, Dict
+from pydantic import BaseModel
 
 
 class Secrets(BaseModel):

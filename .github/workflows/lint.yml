@@ -14,11 +14,16 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
-      
-    - name: Lint with ruff
-      uses: chartboost/ruff-action@v1
-      with:
-          src: "."
-          version: 0.0.262
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: pip install black
+
+      - name: Lint with black
+        run: black --check .

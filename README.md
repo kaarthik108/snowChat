@@ -16,10 +16,12 @@
 
 ## 🌟 Features
 
-- Interactive and user-friendly interface
-- Integration with Snowflake Data Warehouse
-- Utilizes OpenAI's GPT-3.5-turbo-16k and text-embedding-ada-002
-- Uses Supabase PG-vector Vector Database for storing and searching through vectors
+- **Conversational AI**: Harnesses ChatGPT to translate natural language into precise SQL queries.
+- **Conversational Memory**: Retains context for interactive, dynamic responses.
+- **Snowflake Integration**: Offers seamless, real-time data insights straight from your Snowflake database.
+- **Self-healing SQL**: Proactively suggests solutions for SQL errors, streamlining data access.
+- **Interactive User Interface**: Transforms data querying into an engaging conversation, complete with a chat reset option.
+
 
 ## 🛠️ Installation
 
@@ -41,19 +43,11 @@
 7. Run the Streamlit app to start chatting:
    streamlit run main.py
 
-## 📚 Usage
-
-1. Launch the app by visiting the URL provided by Streamlit.
-2. Type your query in natural language or SQL format in the input box.
-3. Press "Submit" to generate the response.
-4. The chatbot will generate a response based on your query and display the result, including any relevant data or SQL code.
-
 ## 🚀 Additional Enhancements
 
-1. **Automation**: Create a generalized script that retrieves schema information from Snowflake automatically.
-2. **Platform Integration**: Connect snowChat with popular communication platforms like Slack or Discord for seamless interaction.
-3. **Voice Integration**: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
-4. **Advanced Analytics**: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
+1. **Platform Integration**: Connect snowChat with popular communication platforms like Slack or Discord for seamless interaction.
+2. **Voice Integration**: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
+3. **Advanced Analytics**: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
 
 ## 🤝 Contributing
 

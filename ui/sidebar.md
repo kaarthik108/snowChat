@@ -1,12 +1,14 @@
-# snowChat - Chat with you're Snowflake Data
+# snowflake + ChatGPT = snowChat
 
-SnowChat is an intuitive and user-friendly application that allows you to interact with your Snowflake data using natural language queries. Type in your questions or requests, and SnowChat will generate the appropriate SQL query and return the data you need. No more complex SQL queries or digging through tables - SnowChat makes it easy to access your data!
+SnowChat is an intuitive and user-friendly application that allows you to interact with your Snowflake data using natural language queries. Type in your questions or requests, and SnowChat will generate the appropriate SQL query and return the data you need.
 
 ## Features
 
-- **Natural Language Processing**: Understands your text queries and converts them into SQL queries.
-- **Instant Results**: Fetches the data from your Snowflake database and displays the results quickly.
-- **GEN AI models**: Uses OpenAI's GPT-4 and vector search to generate SQL queries.
+- **Conversational AI**: Harnesses ChatGPT to translate natural language into precise SQL queries.
+- **Conversational Memory**: Retains context for interactive, dynamic responses.
+- **Snowflake Integration**: Offers seamless, real-time data insights straight from your Snowflake database.
+- **Self-healing SQL**: Proactively suggests solutions for SQL errors, streamlining data access.
+- **Interactive User Interface**: Transforms data querying into an engaging conversation, complete with a chat reset option.
 
 Here are some example queries you can try with SnowChat:
 
