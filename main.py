@@ -32,7 +32,11 @@ st.sidebar.code(snow_ddl.ddl_dict[selected_table], language="sql")
 
 # Add a reset button
 if st.sidebar.button("Reset Chat"):
-    st.session_state["messages"] = INITIAL_MESSAGE
+    st.cache_resource.clear()
+    st.cache_data.clear()
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.session_state["messages"] = INITIAL_MESSAGE.copy()
     st.session_state["history"] = []
 
 st.write(styles_content, unsafe_allow_html=True)
@@ -102,11 +106,12 @@ def execute_sql(query, conn, retries=2):
 
 if st.session_state.messages[-1]["role"] != "assistant":
     content = st.session_state.messages[-1]["content"]
-    result = chain({"question": content, "chat_history": st.session_state["history"]})[
-        "answer"
-    ]
-    append_message(result)
-    if get_sql(result):
-        df = execute_sql(get_sql(result), conn)
-        if df is not None:
-            append_message(df, "data", True)
+    if isinstance(content, str):
+        result = chain({"question": content, "chat_history": ""})[
+            "answer"
+        ]
+        append_message(result)
+        if get_sql(result):
+            df = execute_sql(get_sql(result), conn)
+            if df is not None:
+                append_message(df, "data", True)
