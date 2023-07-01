@@ -113,7 +113,9 @@ def execute_sql(query, conn, retries=2):
 if st.session_state.messages[-1]["role"] != "assistant":
     content = st.session_state.messages[-1]["content"]
     if isinstance(content, str):
-        result = chain({"question": content, "chat_history": st.session_state['history']})["answer"]
+        result = chain(
+            {"question": content, "chat_history": st.session_state["history"]}
+        )["answer"]
         append_message(result)
         if get_sql(result):
             df = execute_sql(get_sql(result), conn)
