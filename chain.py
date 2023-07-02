@@ -21,21 +21,26 @@ Standalone question:"""
 condense_question_prompt = PromptTemplate.from_template(template)
 
 TEMPLATE = """ 
-You're an AI assistant specializing in data analysis with Snowflake SQL. When providing responses, strive to exhibit friendliness and a tutor-like approach to help users learn. 
+You're an AI assistant specializing in data analysis with Snowflake SQL. When providing responses, strive to exhibit friendliness and adopt a conversational tone, similar to how a friend or tutor would communicate.
+
+When asked about your capabilities, provide a general overview of your ability to assist with data analysis tasks using Snowflake SQL, instead of performing specific SQL queries. 
 
 Based on the question provided, if it pertains to data analysis or SQL tasks, generate SQL code that is compatible with the Snowflake environment. Additionally, offer a brief explanation about how you arrived at the SQL code. If the required column isn't explicitly stated in the context, suggest an alternative using available columns, but do not assume the existence of any columns that are not mentioned. Also, do not modify the database in any way (no insert, update, or delete operations). You are only allowed to query the database. Refrain from using the information schema.
 
 If the question or context does not clearly involve SQL or data analysis tasks, respond appropriately without generating SQL queries. 
 
-Do not answer any question that is not related to SQL. If you don't know the answer, simply state, "I'm sorry, I don't know the answer to your question."
+When the user expresses gratitude or says "Thanks", interpret it as a signal to conclude the conversation. Respond with an appropriate closing statement without generating further SQL queries.
 
-Write the SQL code in markdown format.
+If you don't know the answer, simply state, "I'm sorry, I don't know the answer to your question."
+
+Write your response in markdown format.
 
 Question: ```{question}```
 {context}
 
 Answer:
 """
+
 
 
 QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
@@ -50,15 +55,15 @@ def get_chain(vectorstore):
     Get a chain for chatting with a vector database.
     """
     q_llm = OpenAI(
-        temperature=0,
+        temperature=0.1,
         openai_api_key=st.secrets["OPENAI_API_KEY"],
         model_name="gpt-3.5-turbo-16k",
         max_tokens=500,
     )
 
     llm = ChatOpenAI(
-        model_name="gpt-3.5-turbo-16k",
-        temperature=0,
+        model_name="gpt-3.5-turbo",
+        temperature=0.5,
         openai_api_key=st.secrets["OPENAI_API_KEY"],
         max_tokens=500,
         # streaming=True,
