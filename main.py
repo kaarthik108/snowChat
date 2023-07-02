@@ -6,6 +6,7 @@ from chain import load_chain
 from utils.snowchat_ui import message_func
 from utils.snowddl import Snowddl
 from snowflake.snowpark.exceptions import SnowparkSQLException
+from utils.snow_connect import SnowflakeConnection
 
 warnings.filterwarnings("ignore")
 chat_history = []
@@ -66,7 +67,7 @@ for message in st.session_state.messages:
     )
 
 chain = load_chain()
-conn = st.experimental_connection("snowpark")
+conn = SnowflakeConnection().get_session()
 
 
 def append_chat_history(question, answer):
@@ -105,7 +106,7 @@ def handle_sql_exception(query, conn, e, retries=2):
 
 def execute_sql(query, conn, retries=2):
     try:
-        return conn.query(query)
+        return conn.sql(query).collect()
     except SnowparkSQLException as e:
         return handle_sql_exception(query, conn, e, retries)
 

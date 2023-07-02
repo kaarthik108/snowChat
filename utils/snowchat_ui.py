@@ -55,7 +55,7 @@ def message_func(text, is_user=False, is_df=False):
         message_bg_color = "#71797E"
         avatar_class = "bot-avatar"
 
-        if is_df and isinstance(text, pandas.DataFrame):
+        if is_df:
             st.write(
                 f"""
                     <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
