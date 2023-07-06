@@ -8,11 +8,17 @@
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://snowchat.streamlit.app/)
 
+![pika-1688625419232-1x](https://github.com/kaarthik108/snowChat/assets/53030784/839d6c2d-4031-43fb-999d-da5ebaa6a328)
+
+
 **snowChat** is an intuitive and user-friendly application that allows users to interact with their Snowflake data using natural language queries. Type in your questions or requests, and SnowChat will generate the appropriate SQL query and return the data you need. No more complex SQL queries or digging through tables - SnowChat makes it easy to access your data! By bringing data one step closer, SnowChat empowers users to make data-driven decisions faster and more efficiently, reducing the barriers between users and the insights they seek.
+
+
+https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-d8157dd1580a
+
 
 #
 
-![pika-1682575152623-1x](https://user-images.githubusercontent.com/53030784/234772753-228ad22b-3939-47a5-a4cc-c2aa7c08577a.jpeg)
 
 ## 🌟 Features
 
