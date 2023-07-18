@@ -14,6 +14,14 @@ snow_ddl = Snowddl()
 
 st.title("snowChat")
 st.caption("Talk your way through data")
+model = st.radio(
+    "",
+    options=["GPT-3.5", "LLama-2"],
+    index=0,
+    horizontal=True,
+)
+
+st.session_state["model"] = model
 
 INITIAL_MESSAGE = [
     {"role": "user", "content": "Hi!"},
@@ -66,7 +74,7 @@ for message in st.session_state.messages:
         True if message["role"] == "data" else False,
     )
 
-chain = load_chain()
+chain = load_chain(st.session_state["model"])
 conn = SnowflakeConnection().get_session()
 
 

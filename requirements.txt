@@ -9,3 +9,4 @@ unstructured==0.7.12
 tiktoken==0.4.0
 openai==0.27.8
 black==23.3.0
+replicate==0.8.4
