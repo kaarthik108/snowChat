@@ -42,29 +42,49 @@ Question: ```{question}```
 Answer:
 """
 
+LLAMA_TEMPLATE = """
+You're specialized with Snowflake SQL. When providing answers, strive to exhibit friendliness and adopt a conversational tone, similar to how a friend or tutor would communicate.
+
+If the question or context does not clearly involve SQL or data analysis tasks, respond appropriately without generating SQL queries. 
+
+If you don't know the answer, simply state, "I'm sorry, I don't know the answer to your question."
+
+Write SQL code for this Question based on the below context details:  {question}
+
+context: \n {context}
+
+WRITE RESPONSES IN MARKDOWN FORMAT and code in ```sql  ```
+
+Answer:
+
+"""
+
 QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
+LLAMA_PROMPT = PromptTemplate(
+    template=LLAMA_TEMPLATE, input_variables=["question", "context"]
+)
 
 supabase_url = st.secrets["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE_SERVICE_KEY"]
 supabase: Client = create_client(supabase_url, supabase_key)
+
+LLAMA = "a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5"
 
 
 def get_chain_replicate(vectorstore):
     """
     Get a chain for chatting with a vector database.
     """
-
     q_llm = Replicate(
-        model="a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5",
-        input={"temperature": 0.75, "max_length": 5000, "top_p": 1},
-        replicate_api_token=st.secrets["REPLICATE_API_TOKEN"]
+        model=LLAMA,
+        input={"temperature": 0.75, "max_length": 200, "top_p": 1},
+        replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
 
-    llm =  Replicate(
-        model="a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5",
-        input={"temperature": 0.5, "max_length": 5000, "top_p": 1},
-        replicate_api_token=st.secrets["REPLICATE_API_TOKEN"]
-
+    llm = Replicate(
+        model=LLAMA,
+        input={"temperature": 0.1, "max_length": 4000, "top_p": 0.8},
+        replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
 
     question_generator = LLMChain(llm=q_llm, prompt=condense_question_prompt)
@@ -77,6 +97,7 @@ def get_chain_replicate(vectorstore):
     )
 
     return conv_chain
+
 
 def get_chain_gpt(vectorstore):
     """
@@ -107,7 +128,8 @@ def get_chain_gpt(vectorstore):
 
     return conv_chain
 
-def load_chain(model_name="gpt"):
+
+def load_chain(model_name="GPT-3.5"):
     """
     Load the chain from the local file system
 
@@ -122,4 +144,8 @@ def load_chain(model_name="gpt"):
     vectorstore = SupabaseVectorStore(
         embedding=embeddings, client=supabase, table_name="documents"
     )
-    return get_chain_gpt(vectorstore) if model_name == "gpt" else get_chain_replicate(vectorstore)
+    return (
+        get_chain_gpt(vectorstore)
+        if model_name == "GPT-3.5"
+        else get_chain_replicate(vectorstore)
+    )

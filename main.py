@@ -98,7 +98,7 @@ def append_message(content, role="assistant", display=False):
 def handle_sql_exception(query, conn, e, retries=2):
     append_message("Uh oh, I made an error, let me try to fix it..")
     error_message = (
-        "I have an SQL query that's causing an error. FIX The SQL query by searching the schema definition:  \n```sql\n"
+        "You gave me a wrong SQL. FIX The SQL query by searching the schema definition:  \n```sql\n"
         + query
         + "\n```\n Error message: \n "
         + str(e)
@@ -113,6 +113,9 @@ def handle_sql_exception(query, conn, e, retries=2):
 
 
 def execute_sql(query, conn, retries=2):
+    if re.match(r"^\s*(drop|alter|truncate|delete|insert|update)\s", query, re.I):
+        append_message("Sorry, I can't execute queries that can modify the database.")
+        return None
     try:
         return conn.sql(query).collect()
     except SnowparkSQLException as e:
