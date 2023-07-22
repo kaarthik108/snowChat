@@ -63,6 +63,9 @@ if "messages" not in st.session_state.keys():
 if "history" not in st.session_state:
     st.session_state["history"] = []
 
+if "model" not in st.session_state:
+    st.session_state["model"] = model
+
 # Prompt for user input and save
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -75,7 +78,6 @@ for message in st.session_state.messages:
     )
 
 chain = load_chain(st.session_state["model"])
-conn = SnowflakeConnection().get_session()
 
 
 def append_chat_history(question, answer):
@@ -130,6 +132,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
         )["answer"]
         append_message(result)
         if get_sql(result):
+            conn = SnowflakeConnection().get_session()
             df = execute_sql(get_sql(result), conn)
             if df is not None:
                 append_message(df, "data", True)
