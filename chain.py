@@ -9,14 +9,16 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import SupabaseVectorStore
 from supabase.client import Client, create_client
 
-template = """Considering the provided chat history and a subsequent question, rewrite the follow-up question to be an independent query. Alternatively, conclude the conversation if it appears to be complete.
+
+template = """You are an AI chatbot having a conversation with a human.
+
 Chat History:\"""
 {chat_history}
 \"""
-Follow Up Input: \"""
+Human Input: \"""
 {question}
 \"""
-Standalone question:"""
+AI:"""
 
 condense_question_prompt = PromptTemplate.from_template(template)
 
@@ -68,22 +70,26 @@ supabase_url = st.secrets["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE_SERVICE_KEY"]
 supabase: Client = create_client(supabase_url, supabase_key)
 
-LLAMA = "a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5"
+VERSION = "2a7f981751ec7fdf87b5b91ad4db53683a98082e9ff7bfd12c8cd5ea85980a52"
+LLAMA = "a16z-infra/llama13b-v2-chat:{}".format(VERSION)
 
 
-def get_chain_replicate(vectorstore):
+def get_chain_replicate(vectorstore, callback_handler=None):
     """
     Get a chain for chatting with a vector database.
     """
     q_llm = Replicate(
+        # streaming=True,
+        # callbacks=[callback_handler],
         model=LLAMA,
         input={"temperature": 0.75, "max_length": 200, "top_p": 1},
         replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
-
     llm = Replicate(
+        # streaming=True,
+        # callbacks=[callback_handler],
         model=LLAMA,
-        input={"temperature": 0.1, "max_length": 4000, "top_p": 0.8},
+        input={"temperature": 0.75, "max_length": 200, "top_p": 1},
         replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
 
@@ -91,6 +97,7 @@ def get_chain_replicate(vectorstore):
 
     doc_chain = load_qa_chain(llm=llm, chain_type="stuff", prompt=QA_PROMPT)
     conv_chain = ConversationalRetrievalChain(
+        callbacks=[callback_handler],
         retriever=vectorstore.as_retriever(),
         combine_docs_chain=doc_chain,
         question_generator=question_generator,
@@ -99,7 +106,7 @@ def get_chain_replicate(vectorstore):
     return conv_chain
 
 
-def get_chain_gpt(vectorstore):
+def get_chain_gpt(vectorstore, callback_handler=None):
     """
     Get a chain for chatting with a vector database.
     """
@@ -115,7 +122,8 @@ def get_chain_gpt(vectorstore):
         temperature=0.5,
         openai_api_key=st.secrets["OPENAI_API_KEY"],
         max_tokens=500,
-        # streaming=True,
+        callbacks=[callback_handler],
+        streaming=True,
     )
     question_generator = LLMChain(llm=q_llm, prompt=condense_question_prompt)
 
@@ -129,7 +137,7 @@ def get_chain_gpt(vectorstore):
     return conv_chain
 
 
-def load_chain(model_name="GPT-3.5"):
+def load_chain(model_name="GPT-3.5", callback_handler=None):
     """
     Load the chain from the local file system
 
@@ -145,7 +153,7 @@ def load_chain(model_name="GPT-3.5"):
         embedding=embeddings, client=supabase, table_name="documents"
     )
     return (
-        get_chain_gpt(vectorstore)
+        get_chain_gpt(vectorstore, callback_handler=callback_handler)
         if model_name == "GPT-3.5"
-        else get_chain_replicate(vectorstore)
+        else get_chain_replicate(vectorstore, callback_handler=callback_handler)
     )

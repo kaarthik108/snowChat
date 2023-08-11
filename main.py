@@ -7,6 +7,7 @@ from utils.snowchat_ui import message_func
 from utils.snowddl import Snowddl
 from snowflake.snowpark.exceptions import SnowparkSQLException
 from utils.snow_connect import SnowflakeConnection
+from utils.snowchat_ui import StreamlitUICallbackHandler
 
 warnings.filterwarnings("ignore")
 chat_history = []
@@ -70,6 +71,9 @@ if "model" not in st.session_state:
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
 
+if st.session_state["model"] == "LLama-2":
+    st.caption("Streaming currently not supported for _LLama-2_ model.")
+
 for message in st.session_state.messages:
     message_func(
         message["content"],
@@ -77,7 +81,9 @@ for message in st.session_state.messages:
         True if message["role"] == "data" else False,
     )
 
-chain = load_chain(st.session_state["model"])
+callback_handler = StreamlitUICallbackHandler()
+
+chain = load_chain(st.session_state["model"], callback_handler)
 
 
 def append_chat_history(question, answer):
@@ -91,10 +97,15 @@ def get_sql(text):
 
 def append_message(content, role="assistant", display=False):
     message = {"role": role, "content": content}
-    message_func(content, False, display)
+    if model == "LLama-2":  # unable to get streaming working with LLama-2
+        message_func(content, False, display)
     st.session_state.messages.append(message)
     if role != "data":
         append_chat_history(st.session_state.messages[-2]["content"], content)
+
+    if callback_handler.has_streaming_ended:
+        callback_handler.has_streaming_ended = False
+        return
 
 
 def handle_sql_exception(query, conn, e, retries=2):
@@ -127,12 +138,16 @@ def execute_sql(query, conn, retries=2):
 if st.session_state.messages[-1]["role"] != "assistant":
     content = st.session_state.messages[-1]["content"]
     if isinstance(content, str):
+        print("content is --------", content)
+        print("history is --------", st.session_state["history"])
         result = chain(
             {"question": content, "chat_history": st.session_state["history"]}
         )["answer"]
+        # print(result)
         append_message(result)
         if get_sql(result):
             conn = SnowflakeConnection().get_session()
             df = execute_sql(get_sql(result), conn)
             if df is not None:
+                callback_handler.display_dataframe(df)
                 append_message(df, "data", True)
