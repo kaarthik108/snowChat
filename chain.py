@@ -4,7 +4,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI, Replicate
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, ChatLiteLLM
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import SupabaseVectorStore
 from supabase.client import Client, create_client
@@ -117,7 +117,7 @@ def get_chain_gpt(vectorstore, callback_handler=None):
         max_tokens=500,
     )
 
-    llm = ChatOpenAI(
+    llm = ChatLiteLLM(
         model_name="gpt-3.5-turbo",
         temperature=0.5,
         openai_api_key=st.secrets["OPENAI_API_KEY"],
