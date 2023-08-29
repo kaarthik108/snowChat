@@ -84,14 +84,14 @@ def get_chain_replicate(vectorstore, callback_handler=None):
     """
     q_llm = Replicate(
         model=LLAMA,
-        input={"temperature": 0, "max_length": 200, "top_p": 1},
+        input={"temperature": 0.2, "max_length": 200, "top_p": 1},
         replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
     llm = Replicate(
         streaming=True,
         callbacks=[callback_handler],
         model=LLAMA,
-        input={"temperature": 0, "max_length": 300, "top_p": 1},
+        input={"temperature": 0.2, "max_length": 300, "top_p": 1},
         replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
 
