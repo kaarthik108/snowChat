@@ -1,8 +1,8 @@
-import streamlit as st
+from typing import Any, Dict
 
+import streamlit as st
 from snowflake.snowpark.session import Session
 from snowflake.snowpark.version import VERSION
-from typing import Any, Dict
 
 
 class SnowflakeConnection:

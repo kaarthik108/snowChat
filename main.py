@@ -1,13 +1,13 @@
-import streamlit as st
 import re
 import warnings
 
-from chain import load_chain
-from utils.snowchat_ui import message_func
-from utils.snowddl import Snowddl
+import streamlit as st
 from snowflake.snowpark.exceptions import SnowparkSQLException
+
+from chain import load_chain
 from utils.snow_connect import SnowflakeConnection
-from utils.snowchat_ui import StreamlitUICallbackHandler
+from utils.snowchat_ui import StreamlitUICallbackHandler, message_func
+from utils.snowddl import Snowddl
 
 warnings.filterwarnings("ignore")
 chat_history = []
@@ -17,7 +17,7 @@ st.title("snowChat")
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["GPT-3.5", "LLama-2"],
+    options=["✨ GPT-3.5", "🐐 code-LLama"],
     index=0,
     horizontal=True,
 )
@@ -70,9 +70,6 @@ if "model" not in st.session_state:
 # Prompt for user input and save
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
-
-if st.session_state["model"] == "LLama-2":
-    st.caption("Streaming currently not supported for _LLama-2_ model.")
 
 for message in st.session_state.messages:
     message_func(

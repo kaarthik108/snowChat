@@ -1,14 +1,12 @@
 import streamlit as st
-
-from langchain.prompts.prompt import PromptTemplate
 from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain.chains.question_answering import load_qa_chain
-from langchain.llms import OpenAI, Replicate
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.llms import OpenAI, Replicate
+from langchain.prompts.prompt import PromptTemplate
 from langchain.vectorstores import SupabaseVectorStore
 from supabase.client import Client, create_client
-
 
 template = """You are an AI chatbot having a conversation with a human.
 
@@ -43,6 +41,8 @@ Question: ```{question}```
 
 Answer:
 """
+B_INST, E_INST = "[INST]", "[/INST]"
+B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
 LLAMA_TEMPLATE = """
 You're specialized with Snowflake SQL. When providing answers, strive to exhibit friendliness and adopt a conversational tone, similar to how a friend or tutor would communicate.
@@ -53,13 +53,17 @@ If you don't know the answer, simply state, "I'm sorry, I don't know the answer 
 
 Write SQL code for this Question based on the below context details:  {question}
 
+<<CONTEXT>>
 context: \n {context}
+<</CONTEXT>>
 
 WRITE RESPONSES IN MARKDOWN FORMAT and code in ```sql  ```
 
 Answer:
 
 """
+
+LLAMA_TEMPLATE = B_INST + B_SYS + LLAMA_TEMPLATE + E_SYS + E_INST
 
 QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
 LLAMA_PROMPT = PromptTemplate(
@@ -70,8 +74,8 @@ supabase_url = st.secrets["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE_SERVICE_KEY"]
 supabase: Client = create_client(supabase_url, supabase_key)
 
-VERSION = "2a7f981751ec7fdf87b5b91ad4db53683a98082e9ff7bfd12c8cd5ea85980a52"
-LLAMA = "a16z-infra/llama13b-v2-chat:{}".format(VERSION)
+VERSION = "da5676342de1a5a335b848383af297f592b816b950a43d251a0a9edd0113604b"
+LLAMA = "replicate/codellama-13b-instruct:{}".format(VERSION)
 
 
 def get_chain_replicate(vectorstore, callback_handler=None):
@@ -79,17 +83,15 @@ def get_chain_replicate(vectorstore, callback_handler=None):
     Get a chain for chatting with a vector database.
     """
     q_llm = Replicate(
-        # streaming=True,
-        # callbacks=[callback_handler],
         model=LLAMA,
-        input={"temperature": 0.75, "max_length": 200, "top_p": 1},
+        input={"temperature": 0, "max_length": 200, "top_p": 1},
         replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
     llm = Replicate(
-        # streaming=True,
-        # callbacks=[callback_handler],
+        streaming=True,
+        callbacks=[callback_handler],
         model=LLAMA,
-        input={"temperature": 0.75, "max_length": 200, "top_p": 1},
+        input={"temperature": 0, "max_length": 300, "top_p": 1},
         replicate_api_token=st.secrets["REPLICATE_API_TOKEN"],
     )
 
