@@ -156,6 +156,6 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
     )
     return (
         get_chain_gpt(vectorstore, callback_handler=callback_handler)
-        if model_name == "GPT-3.5"
+        if "GPT-3.5" in model_name
         else get_chain_replicate(vectorstore, callback_handler=callback_handler)
     )
