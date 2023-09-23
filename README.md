@@ -54,6 +54,11 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
 2. **Voice Integration**: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
 3. **Advanced Analytics**: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=kaarthik108/snowChat&type=Date)]
+
+
 ## 🤝 Contributing
 
 Feel free to contribute to this project by submitting a pull request or opening an issue. Your feedback and suggestions are greatly appreciated!
