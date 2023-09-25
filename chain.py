@@ -57,7 +57,7 @@ Write SQL code for this Question based on the below context details:  {question}
 context: \n {context}
 <</CONTEXT>>
 
-WRITE RESPONSES IN MARKDOWN FORMAT and code in ```sql  ```
+write responses in markdown format
 
 Answer:
 
@@ -74,8 +74,8 @@ supabase_url = st.secrets["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE_SERVICE_KEY"]
 supabase: Client = create_client(supabase_url, supabase_key)
 
-VERSION = "da5676342de1a5a335b848383af297f592b816b950a43d251a0a9edd0113604b"
-LLAMA = "replicate/codellama-13b-instruct:{}".format(VERSION)
+VERSION = "be553392065353425e0f0193d2a896d6a5ff201549f5d7cd9180c8dfdeac39ed"
+LLAMA = "meta/codellama-13b-instruct:{}".format(VERSION)
 
 
 def get_chain_replicate(vectorstore, callback_handler=None):
