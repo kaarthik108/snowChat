@@ -1,14 +1,17 @@
 
 CREATE extension vector;
 
-CREATE TABLE documents (
+CREATE TABLE ex_documents (
    id UUID PRIMARY KEY,
    content text,
    metadata jsonb,
    embedding vector(1536)
 );
 
-CREATE OR REPLACE FUNCTION match_documents(query_embedding vector(1536), match_count int)
+-- CREATE INDEX ON ex_documents
+-- USING hnsw (embedding vector_ip_ops);
+
+CREATE OR REPLACE FUNCTION match_ex_documents(query_embedding vector(1536), match_count int)
            RETURNS TABLE(
                id UUID,
                content text,
@@ -26,11 +29,11 @@ CREATE OR REPLACE FUNCTION match_documents(query_embedding vector(1536), match_c
                content,
                metadata,
                embedding,
-               1 -(documents.embedding <=> query_embedding) AS similarity
+               1 -(ex_documents.embedding <=> query_embedding) AS similarity
            FROM
-               documents
+               ex_documents
            ORDER BY
-               documents.embedding <=> query_embedding
+               ex_documents.embedding <=> query_embedding
            LIMIT match_count;
        END;
        $$;

@@ -1,4 +1,3 @@
-
 from setuptools import setup, find_packages
 
 setup(
@@ -9,7 +8,7 @@ setup(
         'streamlit',
     ],
     package_data={
-        'snowchat': ['ui/*', 'docs/*', 'sql/*'],
+        'snowchat': ['ui/*', 'docs/*'],
     },
     entry_points={
         'console_scripts': [

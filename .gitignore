@@ -8,3 +8,5 @@ archived_logs/
 snowchat.egg-info
 
 build/
+
+chroma_db
