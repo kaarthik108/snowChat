@@ -1,5 +1,5 @@
 from typing import Any, Dict
-
+import hashlib
 import streamlit as st
 from langchain.document_loaders import DirectoryLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -7,7 +7,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import SupabaseVectorStore
 from pydantic import BaseModel
 from supabase.client import Client, create_client
-
+import json
 
 class Secrets(BaseModel):
     SUPABASE_URL: str
@@ -33,12 +33,24 @@ class DocumentProcessor:
         )
         self.embeddings = OpenAIEmbeddings(openai_api_key=secrets.OPENAI_API_KEY)
 
+    def calculate_checksum(self, content: str) -> str:
+        return hashlib.md5(content.encode()).hexdigest()
+    
     def process(self) -> Dict[str, Any]:
         data = self.loader.load()
-        texts = self.text_splitter.split_documents(data)
-        vector_store = SupabaseVectorStore.from_documents(
-            texts, self.embeddings, client=self.client
-        )
+        vector_store = SupabaseVectorStore(client=self.client)
+        
+        for doc_id, content in data.items():
+            checksum = self.calculate_checksum(content)
+            
+            if vector_store.checksum_exists(checksum):
+                print(f"Skipping {doc_id}, checksum {checksum} already exists.")
+                continue
+            
+            # If not, proceed to split and embed the document
+            texts = self.text_splitter.split_text(content)
+            vector_store.add_document(doc_id, texts, checksum, self.embeddings)
+        
         return vector_store
 
 
@@ -50,7 +62,8 @@ def run():
     )
     config = Config()
     doc_processor = DocumentProcessor(secrets, config)
-    result = doc_processor.process()
+    vector_store = doc_processor.process()
+    result = json.dumps(vector_store.to_dict())
     return result
 
 

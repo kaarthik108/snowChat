@@ -1,15 +1,15 @@
+
+import os
 import re
 import warnings
 
 import streamlit as st
 from snowflake.snowpark.exceptions import SnowparkSQLException
 
-from chain import load_chain
-from utils.snow_connect import SnowflakeConnection
-from utils.snowchat_ui import StreamlitUICallbackHandler, message_func
-from utils.snowddl import Snowddl
+from snowchat import load_chain, SnowflakeConnection, StreamlitUICallbackHandler, message_func, Snowddl
 
 warnings.filterwarnings("ignore")
+
 chat_history = []
 snow_ddl = Snowddl()
 
@@ -31,11 +31,14 @@ INITIAL_MESSAGE = [
         "content": "Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍",
     },
 ]
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sidebar_path = os.path.join(script_dir, "ui", "sidebar.md")
+styles_path = os.path.join(script_dir, "ui", "styles.md")
 
-with open("ui/sidebar.md", "r") as sidebar_file:
+with open(sidebar_path, "r") as sidebar_file:
     sidebar_content = sidebar_file.read()
 
-with open("ui/styles.md", "r") as styles_file:
+with open(styles_path, "r") as styles_file:
     styles_content = styles_file.read()
 
 # Display the DDL for the selected table
@@ -57,8 +60,9 @@ if st.sidebar.button("Reset Chat"):
 
 st.write(styles_content, unsafe_allow_html=True)
 
+print(st.session_state.keys())
 # Initialize the chat messages history
-if "messages" not in st.session_state.keys():
+if "messages" not in st.session_state:
     st.session_state["messages"] = INITIAL_MESSAGE
 
 if "history" not in st.session_state:

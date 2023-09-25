@@ -4,3 +4,7 @@ secrets.toml
 .ruff_cache
 
 archived_logs/
+
+snowchat.egg-info
+
+build/
