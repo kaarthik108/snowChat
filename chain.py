@@ -21,6 +21,7 @@ supabase: Client = create_client(supabase_url, supabase_key)
 VERSION = "1f01a52ff933873dff339d5fb5e1fd6f24f77456836f514fa05e91c1a42699c7"
 LLAMA = "meta/codellama-13b-instruct:{}".format(VERSION)
 
+
 class ModelConfig(BaseModel):
     model_type: str
     secrets: Dict[str, Any]

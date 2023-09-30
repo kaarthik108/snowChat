@@ -55,6 +55,11 @@ if st.sidebar.button("Reset Chat"):
     st.session_state["messages"] = INITIAL_MESSAGE
     st.session_state["history"] = []
 
+st.sidebar.markdown(
+    "**Note:** <span style='color:red'>The snowflake data retrieval is disabled for now.</span>",
+    unsafe_allow_html=True,
+)
+
 st.write(styles_content, unsafe_allow_html=True)
 
 # Initialize the chat messages history
