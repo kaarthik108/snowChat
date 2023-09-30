@@ -17,7 +17,7 @@ st.title("snowChat")
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["✨ GPT-3.5", "🐐 code-LLama"],
+    options=["✨ GPT-3.5", "🐐 code-LLama", "♾️ Claude"],
     index=0,
     horizontal=True,
 )
@@ -94,8 +94,6 @@ def get_sql(text):
 
 def append_message(content, role="assistant", display=False):
     message = {"role": role, "content": content}
-    if model == "LLama-2":  # unable to get streaming working with LLama-2
-        message_func(content, False, display)
     st.session_state.messages.append(message)
     if role != "data":
         append_chat_history(st.session_state.messages[-2]["content"], content)
@@ -138,11 +136,11 @@ if st.session_state.messages[-1]["role"] != "assistant":
         result = chain(
             {"question": content, "chat_history": st.session_state["history"]}
         )["answer"]
-        # print(result)
+        print(result)
         append_message(result)
-        if get_sql(result):
-            conn = SnowflakeConnection().get_session()
-            df = execute_sql(get_sql(result), conn)
-            if df is not None:
-                callback_handler.display_dataframe(df)
-                append_message(df, "data", True)
+        # if get_sql(result):
+        #     conn = SnowflakeConnection().get_session()
+        #     df = execute_sql(get_sql(result), conn)
+        #     if df is not None:
+        #         callback_handler.display_dataframe(df)
+        #         append_message(df, "data", True)

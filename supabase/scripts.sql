@@ -1,36 +1,27 @@
-
 CREATE extension vector;
-
 CREATE TABLE documents (
-   id UUID PRIMARY KEY,
-   content text,
-   metadata jsonb,
-   embedding vector(1536)
+    id UUID PRIMARY KEY,
+    content text,
+    metadata jsonb,
+    embedding vector(1536)
 );
-
-CREATE OR REPLACE FUNCTION match_documents(query_embedding vector(1536), match_count int)
-           RETURNS TABLE(
-               id UUID,
-               content text,
-               metadata jsonb,
-               -- we return matched vectors to enable maximal marginal relevance searches
-               embedding vector(1536),
-               similarity float)
-           LANGUAGE plpgsql
-           AS $$
-           # variable_conflict use_column
-       BEGIN
-           RETURN query
-           SELECT
-               id,
-               content,
-               metadata,
-               embedding,
-               1 -(documents.embedding <=> query_embedding) AS similarity
-           FROM
-               documents
-           ORDER BY
-               documents.embedding <=> query_embedding
-           LIMIT match_count;
-       END;
-       $$;
+CREATE INDEX ON documents USING hnsw (embedding vector_ip_ops);
+CREATE FUNCTION v_match_documents (
+    query_embedding vector (1536),
+    filter jsonb default '{}'
+) RETURNS table (
+    id uuid,
+    content text,
+    metadata jsonb,
+    similarity float
+) language plpgsql as $$ #variable_conflict use_column
+begin return query
+select id,
+    content,
+    metadata,
+    1 - (documents.embedding <=> query_embedding) as similarity
+from documents
+where metadata @> filter
+order by documents.embedding <=> query_embedding;
+END;
+$$;

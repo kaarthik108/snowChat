@@ -143,3 +143,6 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         """
         self.token_buffer = []  # Reset the buffer
         self.has_streaming_ended = True
+
+    def __call__(self, *args, **kwargs):
+        pass
