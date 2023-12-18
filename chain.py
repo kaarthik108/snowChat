@@ -6,7 +6,7 @@ from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.llms import OpenAI, Replicate
+from langchain.llms import OpenAI
 from langchain.llms.bedrock import Bedrock
 from langchain.vectorstores import SupabaseVectorStore
 from pydantic import BaseModel, validator
@@ -18,9 +18,6 @@ supabase_url = st.secrets["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE_SERVICE_KEY"]
 supabase: Client = create_client(supabase_url, supabase_key)
 
-VERSION = "1f01a52ff933873dff339d5fb5e1fd6f24f77456836f514fa05e91c1a42699c7"
-LLAMA = "meta/codellama-13b-instruct:{}".format(VERSION)
-
 
 class ModelConfig(BaseModel):
     model_type: str
@@ -29,7 +26,7 @@ class ModelConfig(BaseModel):
 
     @validator("model_type", pre=True, always=True)
     def validate_model_type(cls, v):
-        if v not in ["code-llama", "gpt", "claude"]:
+        if v not in ["gpt", "claude", "mixtral"]:
             raise ValueError(f"Unsupported model type: {v}")
         return v
 
@@ -42,26 +39,12 @@ class ModelWrapper:
         self.setup()
 
     def setup(self):
-        if self.model_type == "code-llama":
-            self.setup_llama()
-        elif self.model_type == "gpt":
+        if self.model_type == "gpt":
             self.setup_gpt()
         elif self.model_type == "claude":
             self.setup_claude()
-
-    def setup_llama(self):
-        self.q_llm = Replicate(
-            model=LLAMA,
-            input={"temperature": 0.2, "max_length": 200, "top_p": 1},
-            replicate_api_token=self.secrets["REPLICATE_API_TOKEN"],
-        )
-        self.llm = Replicate(
-            streaming=True,
-            callbacks=[self.callback_handler],
-            model=LLAMA,
-            input={"temperature": 0.2, "max_length": 300, "top_p": 1},
-            replicate_api_token=self.secrets["REPLICATE_API_TOKEN"],
-        )
+        elif self.model_type == "mixtral":
+            self.setup_mixtral()
 
     def setup_gpt(self):
         self.q_llm = OpenAI(
@@ -78,6 +61,25 @@ class ModelWrapper:
             max_tokens=500,
             callbacks=[self.callback_handler],
             streaming=True,
+        )
+
+    def setup_mixtral(self):
+        self.q_llm = OpenAI(
+            temperature=0.1,
+            openai_api_key=self.secrets["MIXTRAL_API_KEY"],
+            model_name="mistralai/Mixtral-8x7B-Instruct-v0.1",
+            max_tokens=500,
+            base_url="https://api.together.xyz/v1",
+        )
+
+        self.llm = ChatOpenAI(
+            model_name="mistralai/Mixtral-8x7B-Instruct-v0.1",
+            temperature=0.5,
+            openai_api_key=self.secrets["MIXTRAL_API_KEY"],
+            max_tokens=500,
+            callbacks=[self.callback_handler],
+            streaming=True,
+            base_url="https://api.together.xyz/v1",
         )
 
     def setup_claude(self):
@@ -132,8 +134,10 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
         model_type = "claude"
     elif "GPT-3.5" in model_name:
         model_type = "gpt"
+    elif "mixtral" in model_name.lower():
+        model_type = "mixtral"
     else:
-        model_type = "code-llama"
+        raise ValueError(f"Unsupported model name: {model_name}")
 
     config = ModelConfig(
         model_type=model_type, secrets=st.secrets, callback_handler=callback_handler

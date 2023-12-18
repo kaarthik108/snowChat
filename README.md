@@ -9,25 +9,21 @@
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://snowchat.streamlit.app/)
 
-
 ![156shots_so](https://github.com/kaarthik108/snowChat/assets/53030784/7538d25b-a2d4-4a2c-9601-fb4c7db3c0b6)
-
 
 **snowChat** is an intuitive and user-friendly application that allows users to interact with their Snowflake data using natural language queries. Type in your questions or requests, and SnowChat will generate the appropriate SQL query and return the data you need. No more complex SQL queries or digging through tables - SnowChat makes it easy to access your data! By bringing data one step closer, SnowChat empowers users to make data-driven decisions faster and more efficiently, reducing the barriers between users and the insights they seek.
 
 ## Supported LLM's
+
 - GPT-3.5-turbo-16k
-- Code-llama-13B-instruct
 - Claude-instant-v1
+- Mixtral 8x7B
 
 #
-
 
 https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-d8157dd1580a
 
-
 #
-
 
 ## 🌟 Features
 
@@ -36,7 +32,6 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
 - **Snowflake Integration**: Offers seamless, real-time data insights straight from your Snowflake database.
 - **Self-healing SQL**: Proactively suggests solutions for SQL errors, streamlining data access.
 - **Interactive User Interface**: Transforms data querying into an engaging conversation, complete with a chat reset option.
-
 
 ## 🛠️ Installation
 
@@ -47,7 +42,7 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
    cd snowchat
    pip install -r requirements.txt
 
-3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`,  `WAREHOUSE`, `SUPABASE_URL` , `SUPABASE_SERVICE_KEY` and `REPLICATE_API_TOKEN` in project directory `secrets.toml`.
+3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`, `WAREHOUSE`, `SUPABASE_URL` , `SUPABASE_SERVICE_KEY` and `REPLICATE_API_TOKEN` in project directory `secrets.toml`.
 
 4. Make you're schemas and store them in docs folder that matches you're database.
 
@@ -67,7 +62,6 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=kaarthik108/snowChat&type=Date)]
-
 
 ## 🤝 Contributing
 

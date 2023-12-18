@@ -17,7 +17,7 @@ st.title("snowChat")
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["✨ GPT-3.5", "🐐 code-LLama", "♾️ Claude"],
+    options=["✨ GPT-3.5", "♾️ Claude", "⛰️ Mixtral"],
     index=0,
     horizontal=True,
 )
