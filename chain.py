@@ -36,6 +36,8 @@ class ModelWrapper:
         self.model_type = config.model_type
         self.secrets = config.secrets
         self.callback_handler = config.callback_handler
+        account_tag = self.secrets['CF_ACCOUNT_TAG']
+        self.gateway_url = f"https://gateway.ai.cloudflare.com/v1/{account_tag}/k-1-gpt/openai"
         self.setup()
 
     def setup(self):
@@ -49,24 +51,26 @@ class ModelWrapper:
     def setup_gpt(self):
         self.q_llm = OpenAI(
             temperature=0.1,
-            openai_api_key=self.secrets["OPENAI_API_KEY"],
+            api_key=self.secrets["OPENAI_API_KEY"],
             model_name="gpt-3.5-turbo-16k",
             max_tokens=500,
+            base_url=self.gateway_url
         )
 
         self.llm = ChatOpenAI(
             model_name="gpt-3.5-turbo-16k",
             temperature=0.5,
-            openai_api_key=self.secrets["OPENAI_API_KEY"],
+            api_key=self.secrets["OPENAI_API_KEY"],
             max_tokens=500,
             callbacks=[self.callback_handler],
             streaming=True,
+            base_url=self.gateway_url
         )
 
     def setup_mixtral(self):
         self.q_llm = OpenAI(
             temperature=0.1,
-            openai_api_key=self.secrets["MIXTRAL_API_KEY"],
+            api_key=self.secrets["MIXTRAL_API_KEY"],
             model_name="mistralai/Mixtral-8x7B-Instruct-v0.1",
             max_tokens=500,
             base_url="https://api.together.xyz/v1",
@@ -75,7 +79,7 @@ class ModelWrapper:
         self.llm = ChatOpenAI(
             model_name="mistralai/Mixtral-8x7B-Instruct-v0.1",
             temperature=0.5,
-            openai_api_key=self.secrets["MIXTRAL_API_KEY"],
+            api_key=self.secrets["MIXTRAL_API_KEY"],
             max_tokens=500,
             callbacks=[self.callback_handler],
             streaming=True,
