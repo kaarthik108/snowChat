@@ -1,4 +1,5 @@
 from langchain.prompts.prompt import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 template = """You are an AI chatbot having a conversation with a human.
 
@@ -27,11 +28,13 @@ If you don't know the answer, simply state, "I'm sorry, I don't know the answer 
 
 Write your response in markdown format.
 
-Human: ```{question}```
+User: {question}
 {context}
 
 Assistant:
 """
+
+
 B_INST, E_INST = "[INST]", "[/INST]"
 B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
@@ -54,11 +57,14 @@ Answer:
 
 """
 
-LLAMA_TEMPLATE = B_INST + B_SYS + LLAMA_TEMPLATE + E_SYS + E_INST
+# LLAMA_TEMPLATE = B_INST + B_SYS + LLAMA_TEMPLATE + E_SYS + E_INST
 
-CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(template)
+CONDENSE_QUESTION_PROMPT = ChatPromptTemplate.from_template(template)
 
-QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
-LLAMA_PROMPT = PromptTemplate(
-    template=LLAMA_TEMPLATE, input_variables=["question", "context"]
-)
+# QA_PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["question", "context"])
+# LLAMA_PROMPT = PromptTemplate(
+#     template=LLAMA_TEMPLATE, input_variables=["question", "context"]
+# )
+
+
+QA_PROMPT = ChatPromptTemplate.from_template(TEMPLATE)

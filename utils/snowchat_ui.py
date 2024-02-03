@@ -86,7 +86,7 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
     def __init__(self):
         # Buffer to accumulate tokens
         self.token_buffer = []
-        self.placeholder = None
+        self.placeholder = st.empty()
         self.has_streaming_ended = False
 
     def _get_bot_message_container(self, text):
@@ -111,13 +111,10 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         """
         self.token_buffer.append(token)
         complete_message = "".join(self.token_buffer)
-        if self.placeholder is None:
-            container_content = self._get_bot_message_container(complete_message)
-            self.placeholder = st.markdown(container_content, unsafe_allow_html=True)
-        else:
-            # Update the placeholder content
-            container_content = self._get_bot_message_container(complete_message)
-            self.placeholder.markdown(container_content, unsafe_allow_html=True)
+
+        # Update the placeholder content with the complete message
+        container_content = self._get_bot_message_container(complete_message)
+        self.placeholder.markdown(container_content, unsafe_allow_html=True)
 
     def display_dataframe(self, df):
         """

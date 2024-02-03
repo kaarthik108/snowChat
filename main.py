@@ -5,7 +5,8 @@ import streamlit as st
 from snowflake.snowpark.exceptions import SnowparkSQLException
 
 from chain import load_chain
-from utils.snow_connect import SnowflakeConnection
+
+# from utils.snow_connect import SnowflakeConnection
 from utils.snowchat_ui import StreamlitUICallbackHandler, message_func
 from utils.snowddl import Snowddl
 
@@ -17,11 +18,10 @@ st.title("snowChat")
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["✨ GPT-3.5", "♾️ Claude", "⛰️ Mixtral"],
+    options=["✨ GPT-3.5", "♾️ codellama", "⛰️ Mixtral"],
     index=0,
     horizontal=True,
 )
-
 st.session_state["model"] = model
 
 INITIAL_MESSAGE = [
@@ -97,15 +97,10 @@ def get_sql(text):
     return sql_match.group(1) if sql_match else None
 
 
-def append_message(content, role="assistant", display=False):
-    message = {"role": role, "content": content}
-    st.session_state.messages.append(message)
-    if role != "data":
-        append_chat_history(st.session_state.messages[-2]["content"], content)
-
-    if callback_handler.has_streaming_ended:
-        callback_handler.has_streaming_ended = False
-        return
+def append_message(content, role="assistant"):
+    """Appends a message to the session state messages."""
+    if content.strip():
+        st.session_state.messages.append({"role": role, "content": content})
 
 
 def handle_sql_exception(query, conn, e, retries=2):
@@ -135,14 +130,22 @@ def execute_sql(query, conn, retries=2):
         return handle_sql_exception(query, conn, e, retries)
 
 
-if st.session_state.messages[-1]["role"] != "assistant":
-    content = st.session_state.messages[-1]["content"]
-    if isinstance(content, str):
-        result = chain(
-            {"question": content, "chat_history": st.session_state["history"]}
-        )["answer"]
-        print(result)
-        append_message(result)
+if (
+    "messages" in st.session_state
+    and st.session_state["messages"][-1]["role"] != "assistant"
+):
+    user_input_content = st.session_state["messages"][-1]["content"]
+    # print(f"User input content is: {user_input_content}")
+
+    if isinstance(user_input_content, str):
+        result = chain.invoke(
+            {
+                "question": user_input_content,
+                "chat_history": [h for h in st.session_state["history"]],
+            }
+        )
+        append_message(result.content)
+
         # if get_sql(result):
         #     conn = SnowflakeConnection().get_session()
         #     df = execute_sql(get_sql(result), conn)

@@ -1,13 +1,12 @@
-langchain==0.0.350
+langchain==0.1.5
 pandas==1.5.0
 pydantic==1.10.8
 snowflake_snowpark_python==1.5.0
 snowflake-snowpark-python[pandas]
-streamlit==1.27.1
+streamlit==1.31.0
 supabase==1.0.3
 unstructured==0.7.12
 tiktoken==0.4.0
-openai==0.27.8
+openai==1.11.0
 black==23.3.0
-replicate==0.8.4
 boto3==1.28.57
