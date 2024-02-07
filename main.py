@@ -135,9 +135,10 @@ if (
     and st.session_state["messages"][-1]["role"] != "assistant"
 ):
     user_input_content = st.session_state["messages"][-1]["content"]
-    # print(f"User input content is: {user_input_content}")
 
     if isinstance(user_input_content, str):
+        callback_handler.start_loading_message()
+
         result = chain.invoke(
             {
                 "question": user_input_content,

@@ -84,10 +84,28 @@ def message_func(text, is_user=False, is_df=False):
 
 class StreamlitUICallbackHandler(BaseCallbackHandler):
     def __init__(self):
-        # Buffer to accumulate tokens
         self.token_buffer = []
         self.placeholder = st.empty()
         self.has_streaming_ended = False
+        self.has_streaming_started = False
+
+    def start_loading_message(self):
+        loading_message_content = self._get_bot_message_container("Thinking...")
+        self.placeholder.markdown(loading_message_content, unsafe_allow_html=True)
+
+    def on_llm_new_token(self, token, run_id, parent_run_id=None, **kwargs):
+        if not self.has_streaming_started:
+            self.has_streaming_started = True
+
+        self.token_buffer.append(token)
+        complete_message = "".join(self.token_buffer)
+        container_content = self._get_bot_message_container(complete_message)
+        self.placeholder.markdown(container_content, unsafe_allow_html=True)
+
+    def on_llm_end(self, response, run_id, parent_run_id=None, **kwargs):
+        self.token_buffer = []
+        self.has_streaming_ended = True
+        self.has_streaming_started = False
 
     def _get_bot_message_container(self, text):
         """Generate the bot's message container style for the given text."""
@@ -95,7 +113,9 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         message_alignment = "flex-start"
         message_bg_color = "#71797E"
         avatar_class = "bot-avatar"
-        formatted_text = format_message(text)
+        formatted_text = format_message(
+            text
+        )  # Ensure this handles "Thinking..." appropriately.
         container_content = f"""
             <div style="display: flex; align-items: center; margin-bottom: 10px; justify-content: {message_alignment};">
                 <img src="{avatar_url}" class="{avatar_class}" alt="avatar" style="width: 50px; height: 50px;" />
@@ -104,17 +124,6 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
             </div>
         """
         return container_content
-
-    def on_llm_new_token(self, token, run_id, parent_run_id=None, **kwargs):
-        """
-        Handle the new token from the model. Accumulate tokens in a buffer and update the Streamlit UI.
-        """
-        self.token_buffer.append(token)
-        complete_message = "".join(self.token_buffer)
-
-        # Update the placeholder content with the complete message
-        container_content = self._get_bot_message_container(complete_message)
-        self.placeholder.markdown(container_content, unsafe_allow_html=True)
 
     def display_dataframe(self, df):
         """
@@ -133,13 +142,6 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
             unsafe_allow_html=True,
         )
         st.write(df)
-
-    def on_llm_end(self, response, run_id, parent_run_id=None, **kwargs):
-        """
-        Reset the buffer when the LLM finishes running.
-        """
-        self.token_buffer = []  # Reset the buffer
-        self.has_streaming_ended = True
 
     def __call__(self, *args, **kwargs):
         pass
