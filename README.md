@@ -15,9 +15,9 @@
 
 ## Supported LLM's
 
-- GPT-3.5-turbo-16k
-- Claude-instant-v1
-- Mixtral 8x7B
+- GPT-3.5-turbo-0125
+- CodeLlama-70B
+- Mistral Medium
 
 #
 

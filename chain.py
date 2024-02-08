@@ -34,7 +34,7 @@ class ModelConfig(BaseModel):
 
     @validator("model_type", pre=True, always=True)
     def validate_model_type(cls, v):
-        if v not in ["gpt", "codellama", "mixtral"]:
+        if v not in ["gpt", "codellama", "mistral"]:
             raise ValueError(f"Unsupported model type: {v}")
         return v
 
@@ -55,7 +55,7 @@ class ModelWrapper:
             self.setup_gpt()
         elif self.model_type == "codellama":
             self.setup_codellama()
-        elif self.model_type == "mixtral":
+        elif self.model_type == "mistral":
             self.setup_mixtral()
 
     def setup_gpt(self):
@@ -71,13 +71,13 @@ class ModelWrapper:
 
     def setup_mixtral(self):
         self.llm = ChatOpenAI(
-            model_name="mistralai/Mixtral-8x7B-Instruct-v0.1",
+            model_name="mistralai/mistral-medium",
             temperature=0.2,
-            api_key=self.secrets["MIXTRAL_API_KEY"],
+            api_key=self.secrets["OPENROUTER_API_KEY"],
             max_tokens=500,
             callbacks=[self.callback_handler],
             streaming=True,
-            base_url="https://api.together.xyz/v1",
+            base_url="https://openrouter.ai/api/v1",
         )
 
     def setup_codellama(self):
@@ -157,8 +157,8 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
         model_type = "codellama"
     elif "GPT-3.5" in model_name:
         model_type = "gpt"
-    elif "mixtral" in model_name.lower():
-        model_type = "mixtral"
+    elif "mistral" in model_name.lower():
+        model_type = "mistral"
     else:
         raise ValueError(f"Unsupported model name: {model_name}")
 
