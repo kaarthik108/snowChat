@@ -9,3 +9,9 @@ build/
 snowchat.egg-info/
 
 chroma_db
+
+pplx.py
+
+test.json
+test.*
+app.py

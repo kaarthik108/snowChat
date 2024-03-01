@@ -11,8 +11,14 @@
         background-color: white;
         z-index: 100;
     }
-    h1 {
-        font-family: 'Roboto Slab', serif;
+    h1, h2 {
+    font-weight: bold;
+    background: -webkit-linear-gradient(left, red, orange);
+    background: linear-gradient(to right, red, orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline;
+    font-size: 3em;
     }
     .user-avatar {
         float: right;
