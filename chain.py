@@ -33,7 +33,7 @@ class ModelConfig(BaseModel):
 
     @validator("model_type", pre=True, always=True)
     def validate_model_type(cls, v):
-        if v not in ["gpt", "mistral", "gemini"]:
+        if v not in ["gpt", "mixtral8x22b", "claude", "mixtral8x7b"]:
             raise ValueError(f"Unsupported model type: {v}")
         return v
 
@@ -52,23 +52,26 @@ class ModelWrapper:
     def setup(self):
         if self.model_type == "gpt":
             self.setup_gpt()
-        elif self.model_type == "gemini":
-            self.setup_gemini()
-        elif self.model_type == "mistral":
-            self.setup_mixtral()
+        elif self.model_type == "claude":
+            self.setup_claude()
+        elif self.model_type == "mixtral8x7b":
+            self.setup_mixtral_8x7b()
+        elif self.model_type == "mixtral8x22b":
+            self.setup_mixtral_8x22b()
+        
 
     def setup_gpt(self):
         self.llm = ChatOpenAI(
-            model_name="gpt-3.5-turbo-0125",
+            model_name="gpt-3.5-turbo",
             temperature=0.2,
             api_key=self.secrets["OPENAI_API_KEY"],
             max_tokens=1000,
             callbacks=[self.callback_handler],
             streaming=True,
-            base_url=self.gateway_url,
+            # base_url=self.gateway_url,
         )
 
-    def setup_mixtral(self):
+    def setup_mixtral_8x7b(self):
         self.llm = ChatOpenAI(
             model_name="mixtral-8x7b-32768",
             temperature=0.2,
@@ -79,12 +82,27 @@ class ModelWrapper:
             base_url="https://api.groq.com/openai/v1",
         )
 
-    def setup_gemini(self):
+    def setup_claude(self):
         self.llm = ChatOpenAI(
-            model_name="google/gemini-pro",
-            temperature=0.2,
+            model_name="anthropic/claude-3-haiku",
+            temperature=0.1,
             api_key=self.secrets["OPENROUTER_API_KEY"],
-            max_tokens=1200,
+            max_tokens=700,
+            callbacks=[self.callback_handler],
+            streaming=True,
+            base_url="https://openrouter.ai/api/v1",
+            default_headers={
+                "HTTP-Referer": "https://snowchat.streamlit.app/",
+                "X-Title": "Snowchat",
+            },
+        )
+
+    def setup_mixtral_8x22b(self):
+        self.llm = ChatOpenAI(
+            model_name="mistralai/mixtral-8x22b",
+            temperature=0.1,
+            api_key=self.secrets["OPENROUTER_API_KEY"],
+            max_tokens=700,
             callbacks=[self.callback_handler],
             streaming=True,
             base_url="https://openrouter.ai/api/v1",
@@ -133,10 +151,12 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
 
     if "GPT-3.5" in model_name:
         model_type = "gpt"
-    elif "mistral" in model_name.lower():
-        model_type = "mistral"
-    elif "gemini" in model_name.lower():
-        model_type = "gemini"
+    elif "mixtral 8x7b" in model_name.lower():
+        model_type = "mixtral8x7b"
+    elif "claude" in model_name.lower():
+        model_type = "claude"
+    elif "mixtral 8x22b" in model_name.lower():
+        model_type = "mixtral8x22b"
     else:
         raise ValueError(f"Unsupported model name: {model_name}")
 

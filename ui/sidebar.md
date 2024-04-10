@@ -12,7 +12,7 @@ SnowChat is an intuitive and user-friendly application that allows you to intera
 
 Here are some example queries you can try with SnowChat:
 
-- Show me the total revenue for each product category.
+- Write SQL code to show me the total revenue for each product category.
 - Who are the top 10 customers by sales?
 - What is the average order value for each region?
 - How many orders were placed last week?

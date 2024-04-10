@@ -34,7 +34,7 @@ st.markdown(gradient_text_html, unsafe_allow_html=True)
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["GPT-3.5 - OpenAI", "Gemini 1.5 - Openrouter", "Mistral 8x7B - Groq"],
+    options=["Claude-3 Haiku", "Mixtral 8x7B", "Mixtral 8x22B", "GPT-3.5"],
     index=0,
     horizontal=True,
 )
@@ -43,12 +43,20 @@ st.session_state["model"] = model
 if "toast_shown" not in st.session_state:
     st.session_state["toast_shown"] = False
 
+if "rate-limit" not in st.session_state:
+    st.session_state["rate-limit"] = False
+
 # Show the toast only if it hasn't been shown before
 if not st.session_state["toast_shown"]:
     st.toast("The snowflake data retrieval is disabled for now.", icon="👋")
     st.session_state["toast_shown"] = True
 
-if st.session_state["model"] == "👑 Mistral 8x7B - Groq":
+# Show a warning if the model is rate-limited
+if st.session_state['rate-limit']:
+    st.toast("Probably rate limited.. Go easy folks", icon="⚠️")
+    st.session_state['rate-limit'] = False
+
+if st.session_state["model"] == "Mixtral 8x7B":
     st.warning("This is highly rate-limited. Please use it sparingly", icon="⚠️")
 
 INITIAL_MESSAGE = [
@@ -172,6 +180,9 @@ if (
             }
         )
         append_message(result.content)
+
+if st.session_state["model"] == "Mixtral 8x7B" and st.session_state['messages'][-1]['content'] == "":
+    st.session_state['rate-limit'] = True
 
         # if get_sql(result):
         #     conn = SnowflakeConnection().get_session()

@@ -11,15 +11,18 @@ openai_url = (
     image_url
     + "png-transparent-openai-chatgpt-logo-thumbnail.png?t=2024-03-01T07%3A41%3A47.586Z"
 )
-
+user_url = image_url + "cat-with-sunglasses.png"
+claude_url = image_url + "Claude.png?t=2024-03-13T23%3A47%3A16.824Z"
 
 def get_model_url(model_name):
     if "gpt" in model_name.lower():
         return openai_url
+    elif "claude" in model_name.lower():
+        return claude_url
+    elif "mixtral" in model_name.lower():
+        return mistral_url
     elif "gemini" in model_name.lower():
         return gemini_url
-    elif "mistral" in model_name.lower():
-        return mistral_url
     return mistral_url
 
 
@@ -57,7 +60,7 @@ def message_func(text, is_user=False, is_df=False, model="gpt"):
 
     avatar_url = model_url
     if is_user:
-        avatar_url = "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortFlat&accessoriesType=Prescription01&hairColor=Auburn&facialHairType=BeardLight&facialHairColor=Black&clotheType=Hoodie&clotheColor=PastelBlue&eyeType=Squint&eyebrowType=DefaultNatural&mouthType=Smile&skinColor=Tanned"
+        avatar_url = user_url
         message_alignment = "flex-end"
         message_bg_color = "linear-gradient(135deg, #00B2FF 0%, #006AFF 100%)"
         avatar_class = "user-avatar"
