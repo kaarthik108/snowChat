@@ -1,7 +1,7 @@
 from typing import Any, Callable, Dict, Optional
 
 import streamlit as st
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.vectorstores import SupabaseVectorStore
@@ -33,7 +33,7 @@ class ModelConfig(BaseModel):
 
     @validator("model_type", pre=True, always=True)
     def validate_model_type(cls, v):
-        if v not in ["gpt", "mixtral8x22b", "claude", "mixtral8x7b"]:
+        if v not in ["gpt", "gemini", "claude", "mixtral8x7b"]:
             raise ValueError(f"Unsupported model type: {v}")
         return v
 
@@ -56,8 +56,8 @@ class ModelWrapper:
             self.setup_claude()
         elif self.model_type == "mixtral8x7b":
             self.setup_mixtral_8x7b()
-        elif self.model_type == "mixtral8x22b":
-            self.setup_mixtral_8x22b()
+        elif self.model_type == "gemini":
+            self.setup_gemini()
         
 
     def setup_gpt(self):
@@ -97,9 +97,9 @@ class ModelWrapper:
             },
         )
 
-    def setup_mixtral_8x22b(self):
+    def setup_gemini(self):
         self.llm = ChatOpenAI(
-            model_name="mistralai/mixtral-8x22b",
+            model_name="google/gemini-pro-1.5",
             temperature=0.1,
             api_key=self.secrets["OPENROUTER_API_KEY"],
             max_tokens=700,
@@ -155,8 +155,8 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
         model_type = "mixtral8x7b"
     elif "claude" in model_name.lower():
         model_type = "claude"
-    elif "mixtral 8x22b" in model_name.lower():
-        model_type = "mixtral8x22b"
+    elif "gemini" in model_name.lower():
+        model_type = "gemini"
     else:
         raise ValueError(f"Unsupported model name: {model_name}")
 

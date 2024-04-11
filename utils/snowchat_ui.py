@@ -119,6 +119,7 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         self.placeholder.markdown(loading_message_content, unsafe_allow_html=True)
 
     def on_llm_new_token(self, token, run_id, parent_run_id=None, **kwargs):
+        print("on llm bnew token ",token)
         if not self.has_streaming_started:
             self.has_streaming_started = True
 
