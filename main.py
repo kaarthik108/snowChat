@@ -34,7 +34,7 @@ st.markdown(gradient_text_html, unsafe_allow_html=True)
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["Claude-3 Haiku", "Mixtral 8x7B", "Gemini 1.5 Pro", "GPT-3.5"],
+    options=["Claude-3 Haiku", "Mixtral 8x7B", "Llama 3-70B", "GPT-3.5"],
     index=0,
     horizontal=True,
 )
@@ -52,9 +52,9 @@ if not st.session_state["toast_shown"]:
     st.session_state["toast_shown"] = True
 
 # Show a warning if the model is rate-limited
-if st.session_state['rate-limit']:
+if st.session_state["rate-limit"]:
     st.toast("Probably rate limited.. Go easy folks", icon="⚠️")
-    st.session_state['rate-limit'] = False
+    st.session_state["rate-limit"] = False
 
 if st.session_state["model"] == "Mixtral 8x7B":
     st.warning("This is highly rate-limited. Please use it sparingly", icon="⚠️")
@@ -181,12 +181,15 @@ if (
         )
         append_message(result.content)
 
-if st.session_state["model"] == "Mixtral 8x7B" and st.session_state['messages'][-1]['content'] == "":
-    st.session_state['rate-limit'] = True
+if (
+    st.session_state["model"] == "Mixtral 8x7B"
+    and st.session_state["messages"][-1]["content"] == ""
+):
+    st.session_state["rate-limit"] = True
 
-        # if get_sql(result):
-        #     conn = SnowflakeConnection().get_session()
-        #     df = execute_sql(get_sql(result), conn)
-        #     if df is not None:
-        #         callback_handler.display_dataframe(df)
-        #         append_message(df, "data", True)
+    # if get_sql(result):
+    #     conn = SnowflakeConnection().get_session()
+    #     df = execute_sql(get_sql(result), conn)
+    #     if df is not None:
+    #         callback_handler.display_dataframe(df)
+    #         append_message(df, "data", True)

@@ -33,7 +33,7 @@ class ModelConfig(BaseModel):
 
     @validator("model_type", pre=True, always=True)
     def validate_model_type(cls, v):
-        if v not in ["gpt", "gemini", "claude", "mixtral8x7b"]:
+        if v not in ["gpt", "llama", "claude", "mixtral8x7b"]:
             raise ValueError(f"Unsupported model type: {v}")
         return v
 
@@ -56,9 +56,8 @@ class ModelWrapper:
             self.setup_claude()
         elif self.model_type == "mixtral8x7b":
             self.setup_mixtral_8x7b()
-        elif self.model_type == "gemini":
-            self.setup_gemini()
-        
+        elif self.model_type == "llama":
+            self.setup_llama()
 
     def setup_gpt(self):
         self.llm = ChatOpenAI(
@@ -97,9 +96,9 @@ class ModelWrapper:
             },
         )
 
-    def setup_gemini(self):
+    def setup_llama(self):
         self.llm = ChatOpenAI(
-            model_name="google/gemini-pro-1.5",
+            model_name="meta-llama/llama-3-70b-instruct",
             temperature=0.1,
             api_key=self.secrets["OPENROUTER_API_KEY"],
             max_tokens=700,
@@ -155,8 +154,8 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
         model_type = "mixtral8x7b"
     elif "claude" in model_name.lower():
         model_type = "claude"
-    elif "gemini" in model_name.lower():
-        model_type = "gemini"
+    elif "llama" in model_name.lower():
+        model_type = "llama"
     else:
         raise ValueError(f"Unsupported model name: {model_name}")
 

@@ -13,14 +13,16 @@ openai_url = (
 )
 user_url = image_url + "cat-with-sunglasses.png"
 claude_url = image_url + "Claude.png?t=2024-03-13T23%3A47%3A16.824Z"
+meta_url = image_url + "meta-logo.webp?t=2024-04-18T22%3A43%3A17.775Z"
+
 
 def get_model_url(model_name):
     if "gpt" in model_name.lower():
         return openai_url
     elif "claude" in model_name.lower():
         return claude_url
-    elif "mixtral" in model_name.lower():
-        return mistral_url
+    elif "llama" in model_name.lower():
+        return meta_url
     elif "gemini" in model_name.lower():
         return gemini_url
     return mistral_url
@@ -119,7 +121,7 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         self.placeholder.markdown(loading_message_content, unsafe_allow_html=True)
 
     def on_llm_new_token(self, token, run_id, parent_run_id=None, **kwargs):
-        print("on llm bnew token ",token)
+        print("on llm bnew token ", token)
         if not self.has_streaming_started:
             self.has_streaming_started = True
 
