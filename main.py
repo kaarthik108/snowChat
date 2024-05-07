@@ -34,7 +34,7 @@ st.markdown(gradient_text_html, unsafe_allow_html=True)
 st.caption("Talk your way through data")
 model = st.radio(
     "",
-    options=["Claude-3 Haiku", "Mixtral 8x7B", "Llama 3-70B", "GPT-3.5"],
+    options=["Claude-3 Haiku", "Mixtral 8x7B", "Llama 3-70B", "GPT-3.5", "Snowflake Arctic"],
     index=0,
     horizontal=True,
 )

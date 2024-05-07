@@ -33,7 +33,7 @@ class ModelConfig(BaseModel):
 
     @validator("model_type", pre=True, always=True)
     def validate_model_type(cls, v):
-        if v not in ["gpt", "llama", "claude", "mixtral8x7b"]:
+        if v not in ["gpt", "llama", "claude", "mixtral8x7b", "arctic"]:
             raise ValueError(f"Unsupported model type: {v}")
         return v
 
@@ -58,6 +58,8 @@ class ModelWrapper:
             self.setup_mixtral_8x7b()
         elif self.model_type == "llama":
             self.setup_llama()
+        elif self.model_type == "arctic":
+            self.setup_arctic()
 
     def setup_gpt(self):
         self.llm = ChatOpenAI(
@@ -99,6 +101,21 @@ class ModelWrapper:
     def setup_llama(self):
         self.llm = ChatOpenAI(
             model_name="meta-llama/llama-3-70b-instruct",
+            temperature=0.1,
+            api_key=self.secrets["OPENROUTER_API_KEY"],
+            max_tokens=700,
+            callbacks=[self.callback_handler],
+            streaming=True,
+            base_url="https://openrouter.ai/api/v1",
+            default_headers={
+                "HTTP-Referer": "https://snowchat.streamlit.app/",
+                "X-Title": "Snowchat",
+            },
+        )
+
+    def setup_arctic(self):
+        self.llm = ChatOpenAI(
+            model_name="snowflake/snowflake-arctic-instruct",
             temperature=0.1,
             api_key=self.secrets["OPENROUTER_API_KEY"],
             max_tokens=700,
@@ -156,6 +173,8 @@ def load_chain(model_name="GPT-3.5", callback_handler=None):
         model_type = "claude"
     elif "llama" in model_name.lower():
         model_type = "llama"
+    elif "arctic" in model_name.lower():
+        model_type = "arctic"
     else:
         raise ValueError(f"Unsupported model name: {model_name}")
 

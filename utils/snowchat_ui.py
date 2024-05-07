@@ -4,17 +4,18 @@ import re
 import streamlit as st
 from langchain.callbacks.base import BaseCallbackHandler
 
+
 image_url = f"{st.secrets['SUPABASE_STORAGE_URL']}/storage/v1/object/public/snowchat/"
-gemini_url = image_url + "google-gemini-icon.png?t=2024-03-01T07%3A25%3A59.637Z"
-mistral_url = image_url + "mistral-ai-icon-logo-B3319DCA6B-seeklogo.com.png"
+gemini_url = image_url + "google-gemini-icon.png?t=2024-05-07T21%3A17%3A52.235Z"
+mistral_url = image_url + "mistral-ai-icon-logo-B3319DCA6B-seeklogo.com.png?t=2024-05-07T21%3A18%3A22.737Z"
 openai_url = (
     image_url
-    + "png-transparent-openai-chatgpt-logo-thumbnail.png?t=2024-03-01T07%3A41%3A47.586Z"
+    + "png-transparent-openai-chatgpt-logo-thumbnail.png?t=2024-05-07T21%3A18%3A44.079Z"
 )
-user_url = image_url + "cat-with-sunglasses.png"
-claude_url = image_url + "Claude.png?t=2024-03-13T23%3A47%3A16.824Z"
-meta_url = image_url + "meta-logo.webp?t=2024-04-18T22%3A43%3A17.775Z"
-
+user_url = image_url + "cat-with-sunglasses.png?t=2024-05-07T21%3A17%3A21.951Z"
+claude_url = image_url + "Claude.png?t=2024-05-07T21%3A16%3A17.252Z"
+meta_url = image_url + "meta-logo.webp?t=2024-05-07T21%3A18%3A12.286Z"
+snow_url = image_url + "Snowflake_idCkdSg0B6_6.png?t=2024-05-07T21%3A24%3A02.597Z"
 
 def get_model_url(model_name):
     if "gpt" in model_name.lower():
@@ -25,6 +26,8 @@ def get_model_url(model_name):
         return meta_url
     elif "gemini" in model_name.lower():
         return gemini_url
+    elif "arctic" in model_name.lower():
+        return snow_url
     return mistral_url
 
 
@@ -121,7 +124,6 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         self.placeholder.markdown(loading_message_content, unsafe_allow_html=True)
 
     def on_llm_new_token(self, token, run_id, parent_run_id=None, **kwargs):
-        print("on llm bnew token ", token)
         if not self.has_streaming_started:
             self.has_streaming_started = True
 
