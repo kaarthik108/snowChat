@@ -7,7 +7,10 @@ from langchain.callbacks.base import BaseCallbackHandler
 
 image_url = f"{st.secrets['SUPABASE_STORAGE_URL']}/storage/v1/object/public/snowchat/"
 gemini_url = image_url + "google-gemini-icon.png?t=2024-05-07T21%3A17%3A52.235Z"
-mistral_url = image_url + "mistral-ai-icon-logo-B3319DCA6B-seeklogo.com.png?t=2024-05-07T21%3A18%3A22.737Z"
+mistral_url = (
+    image_url
+    + "mistral-ai-icon-logo-B3319DCA6B-seeklogo.com.png?t=2024-05-07T21%3A18%3A22.737Z"
+)
 openai_url = (
     image_url
     + "png-transparent-openai-chatgpt-logo-thumbnail.png?t=2024-05-07T21%3A18%3A44.079Z"
@@ -16,10 +19,12 @@ user_url = image_url + "cat-with-sunglasses.png?t=2024-05-07T21%3A17%3A21.951Z"
 claude_url = image_url + "Claude.png?t=2024-05-07T21%3A16%3A17.252Z"
 meta_url = image_url + "meta-logo.webp?t=2024-05-07T21%3A18%3A12.286Z"
 snow_url = image_url + "Snowflake_idCkdSg0B6_6.png?t=2024-05-07T21%3A24%3A02.597Z"
+qwen_url = image_url + "qwen.png?t=2024-06-07T08%3A51%3A36.363Z"
+
 
 def get_model_url(model_name):
-    if "gpt" in model_name.lower():
-        return openai_url
+    if "qwen" in model_name.lower():
+        return qwen_url
     elif "claude" in model_name.lower():
         return claude_url
     elif "llama" in model_name.lower():
