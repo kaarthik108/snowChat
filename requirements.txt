@@ -1,4 +1,4 @@
-langchain==0.1.15
+langchain==0.2.12
 pandas==1.5.0
 pydantic==1.10.8
 snowflake_snowpark_python==1.5.0
