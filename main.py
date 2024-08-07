@@ -32,15 +32,19 @@ gradient_text_html = """
 st.markdown(gradient_text_html, unsafe_allow_html=True)
 
 st.caption("Talk your way through data")
+
+model_options = {
+    "gpt-4o-mini": "GPT-4o Mini",
+    "llama-3.1-405b": "Llama 3.1 405B",
+    "gemma2-9b": "Gemma 2 9B",
+    "claude3-haiku": "Claude 3 Haiku",
+    "mixtral-8x22b": "Mixtral 8x22B",
+}
+
 model = st.radio(
-    "",
-    options=[
-        "Claude-3 Haiku",
-        "Mixtral 8x7B",
-        "Llama 3-70B",
-        "Qwen 2-72B",
-        "Snowflake Arctic",
-    ],
+    "Choose your AI Model:",
+    options=list(model_options.keys()),
+    format_func=lambda x: model_options[x],
     index=0,
     horizontal=True,
 )

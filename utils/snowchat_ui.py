@@ -29,10 +29,12 @@ def get_model_url(model_name):
         return claude_url
     elif "llama" in model_name.lower():
         return meta_url
-    elif "gemini" in model_name.lower():
+    elif "gemma" in model_name.lower():
         return gemini_url
     elif "arctic" in model_name.lower():
         return snow_url
+    elif "gpt" in model_name.lower():
+        return openai_url
     return mistral_url
 
 

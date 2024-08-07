@@ -18,6 +18,7 @@ from langchain_core.messages import get_buffer_string
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_anthropic import ChatAnthropic
 
 DEFAULT_DOCUMENT_PROMPT = PromptTemplate.from_template(template="{page_content}")
 
@@ -31,13 +32,6 @@ class ModelConfig(BaseModel):
     secrets: Dict[str, Any]
     callback_handler: Optional[Callable] = None
 
-    @validator("model_type", pre=True, always=True)
-    def validate_model_type(cls, v):
-        valid_model_types = ["qwen", "llama", "claude", "mixtral8x7b", "arctic"]
-        if v not in valid_model_types:
-            raise ValueError(f"Unsupported model type: {v}")
-        return v
-
 
 class ModelWrapper:
     def __init__(self, config: ModelConfig):
@@ -48,47 +42,61 @@ class ModelWrapper:
 
     def _setup_llm(self):
         model_config = {
-            "qwen": {
-                "model_name": "qwen/qwen-2-72b-instruct",
-                "api_key": self.secrets["OPENROUTER_API_KEY"],
-                "base_url": "https://openrouter.ai/api/v1",
+            "gpt-4o-mini": {
+                "model_name": "gpt-4o-mini",
+                "api_key": self.secrets["OPENAI_API_KEY"],
             },
-            "claude": {
-                "model_name": "anthropic/claude-3-haiku",
-                "api_key": self.secrets["OPENROUTER_API_KEY"],
-                "base_url": "https://openrouter.ai/api/v1",
-            },
-            "mixtral8x7b": {
-                "model_name": "mixtral-8x7b-32768",
+            "gemma2-9b": {
+                "model_name": "gemma2-9b-it",
                 "api_key": self.secrets["GROQ_API_KEY"],
                 "base_url": "https://api.groq.com/openai/v1",
             },
-            "llama": {
-                "model_name": "meta-llama/llama-3-70b-instruct",
-                "api_key": self.secrets["OPENROUTER_API_KEY"],
-                "base_url": "https://openrouter.ai/api/v1",
+            "claude3-haiku": {
+                "model_name": "claude-3-haiku-20240307",
+                "api_key": self.secrets["ANTHROPIC_API_KEY"],
             },
-            "arctic": {
-                "model_name": "snowflake/snowflake-arctic-instruct",
-                "api_key": self.secrets["OPENROUTER_API_KEY"],
-                "base_url": "https://openrouter.ai/api/v1",
+            "mixtral-8x22b": {
+                "model_name": "accounts/fireworks/models/mixtral-8x22b-instruct",
+                "api_key": self.secrets["FIREWORKS_API_KEY"],
+                "base_url": "https://api.fireworks.ai/inference/v1",
+            },
+            "llama-3.1-405b": {
+                "model_name": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+                "api_key": self.secrets["FIREWORKS_API_KEY"],
+                "base_url": "https://api.fireworks.ai/inference/v1",
             },
         }
 
         config = model_config[self.model_type]
 
-        return ChatOpenAI(
-            model_name=config["model_name"],
-            temperature=0.1,
-            api_key=config["api_key"],
-            max_tokens=700,
-            callbacks=[self.callback_handler],
-            streaming=True,
-            base_url=config["base_url"],
-            default_headers={
-                "HTTP-Referer": "https://snowchat.streamlit.app/",
-                "X-Title": "Snowchat",
-            },
+        return (
+            ChatOpenAI(
+                model_name=config["model_name"],
+                temperature=0.1,
+                api_key=config["api_key"],
+                max_tokens=700,
+                callbacks=[self.callback_handler],
+                streaming=True,
+                base_url=config["base_url"]
+                if config["model_name"] != "gpt-4o-mini"
+                else None,
+                default_headers={
+                    "HTTP-Referer": "https://snowchat.streamlit.app/",
+                    "X-Title": "Snowchat",
+                },
+            )
+            if config["model_name"] != "claude-3-haiku-20240307"
+            else (
+                ChatAnthropic(
+                    model=config["model_name"],
+                    temperature=0.1,
+                    max_tokens=700,
+                    timeout=None,
+                    max_retries=2,
+                    callbacks=[self.callback_handler],
+                    streaming=True,
+                )
+            )
         )
 
     def get_chain(self, vectorstore):
@@ -129,11 +137,11 @@ def load_chain(model_name="qwen", callback_handler=None):
     )
 
     model_type_mapping = {
-        "qwen 2-72b": "qwen",
-        "mixtral 8x7b": "mixtral8x7b",
-        "claude-3 haiku": "claude",
-        "llama 3-70b": "llama",
-        "snowflake arctic": "arctic",
+        "gpt-4o-mini": "gpt-4o-mini",
+        "gemma2-9b": "gemma2-9b",
+        "claude3-haiku": "claude3-haiku",
+        "mixtral-8x22b": "mixtral-8x22b",
+        "llama-3.1-405b": "llama-3.1-405b",
     }
 
     model_type = model_type_mapping.get(model_name.lower())
