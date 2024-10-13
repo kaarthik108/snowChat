@@ -33,8 +33,8 @@ class ModelConfig:
 
 def create_agent(callback_handler: BaseCallbackHandler, model_name: str):
     model_configurations = {
-        "gpt-4o-mini": ModelConfig(
-            model_name="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY")
+        "gpt-4o": ModelConfig(
+            model_name="gpt-4o", api_key=os.getenv("OPENAI_API_KEY")
         ),
         "gemma2-9b": ModelConfig(
             model_name="gemma2-9b-it",
@@ -44,8 +44,8 @@ def create_agent(callback_handler: BaseCallbackHandler, model_name: str):
         "claude3-haiku": ModelConfig(
             model_name="claude-3-haiku-20240307", api_key=os.getenv("ANTHROPIC_API_KEY")
         ),
-        "mixtral-8x22b": ModelConfig(
-            model_name="accounts/fireworks/models/mixtral-8x22b-instruct",
+        "llama-3.2-3b": ModelConfig(
+            model_name="accounts/fireworks/models/llama-v3p2-3b-instruct",
             api_key=os.getenv("FIREWORKS_API_KEY"),
             base_url="https://api.fireworks.ai/inference/v1",
         ),
