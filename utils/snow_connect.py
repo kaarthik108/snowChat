@@ -2,7 +2,6 @@ from typing import Any, Dict
 
 import streamlit as st
 from snowflake.snowpark.session import Session
-from snowflake.snowpark.version import VERSION
 
 
 class SnowflakeConnection:

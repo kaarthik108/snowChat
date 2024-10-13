@@ -1,4 +1,3 @@
-from langchain.prompts.prompt import PromptTemplate
 from langchain_core.prompts import ChatPromptTemplate
 
 template = """You are an AI chatbot having a conversation with a human.
