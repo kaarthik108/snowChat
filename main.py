@@ -37,9 +37,9 @@ st.caption("Talk your way through data")
 model_options = {
     "gpt-4o": "GPT-4o",
     "llama-3.1-405b": "Llama 3.1 405B",
-    "gemma2-9b": "Gemma 2 9B",
-    "claude3-haiku": "Claude 3 Haiku",
     "llama-3.2-3b": "Llama 3.2 3B",
+    "claude3-haiku": "Claude 3 Haiku",
+    "Gemini Flash 1.5 8B": "Gemini Flash 1.5 8B",
 }
 
 model = st.radio(

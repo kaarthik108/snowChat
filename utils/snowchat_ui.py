@@ -35,6 +35,8 @@ def get_model_url(model_name):
         return snow_url
     elif "gpt" in model_name.lower():
         return openai_url
+    elif "gemini" in model_name.lower():
+        return gemini_url
     return mistral_url
 
 

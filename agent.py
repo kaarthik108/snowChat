@@ -1,4 +1,5 @@
 import os
+import streamlit as st
 from dataclasses import dataclass
 from typing import Annotated, Sequence, Optional
 
@@ -36,10 +37,10 @@ def create_agent(callback_handler: BaseCallbackHandler, model_name: str):
         "gpt-4o": ModelConfig(
             model_name="gpt-4o", api_key=os.getenv("OPENAI_API_KEY")
         ),
-        "gemma2-9b": ModelConfig(
-            model_name="gemma2-9b-it",
-            api_key=os.getenv("GROQ_API_KEY"),
-            base_url="https://api.groq.com/openai/v1",
+        "Gemini Flash 1.5 8B": ModelConfig(
+            model_name="google/gemini-flash-1.5-8b",
+            api_key=st.secrets["OPENROUTER_API_KEY"],
+            base_url="https://openrouter.ai/api/v1",
         ),
         "claude3-haiku": ModelConfig(
             model_name="claude-3-haiku-20240307", api_key=os.getenv("ANTHROPIC_API_KEY")
