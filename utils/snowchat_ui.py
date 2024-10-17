@@ -78,26 +78,26 @@ def message_func(text, is_user=False, is_df=False, model="gpt"):
     margin_side = "margin-left" if is_user else "margin-right"
     message_text = html.escape(text.strip()).replace('\n', '<br>')
 
-    if is_user:
-        container_html = f"""
-        <div style="display:flex; align-items:flex-start; justify-content:flex-end; margin:0; padding:0; margin-bottom:10px;">
-            <div style="background:{message_bg_color}; color:white; border-radius:20px; padding:10px; margin-right:5px; max-width:75%; font-size:14px; margin:0; line-height:1.2; word-wrap:break-word;">
-                {message_text}
+    if message_text:  # Check if message_text is not empty
+        if is_user:
+            container_html = f"""
+            <div style="display:flex; align-items:flex-start; justify-content:flex-end; margin:0; padding:0; margin-bottom:10px;">
+                <div style="background:{message_bg_color}; color:white; border-radius:20px; padding:10px; margin-right:5px; max-width:75%; font-size:14px; margin:0; line-height:1.2; word-wrap:break-word;">
+                    {message_text}
+                </div>
+                <img src="{avatar_url}" class="{avatar_class}" alt="avatar" style="width:40px; height:40px; margin:0;" />
             </div>
-            <img src="{avatar_url}" class="{avatar_class}" alt="avatar" style="width:40px; height:40px; margin:0;" />
-        </div>
-        """
-    else:
-        container_html = f"""
-        <div style="display:flex; align-items:flex-start; justify-content:flex-start; margin:0; padding:0; margin-bottom:10px;">
-            <img src="{avatar_url}" class="{avatar_class}" alt="avatar" style="width:30px; height:30px; margin:0; margin-right:5px; margin-top:5px;" />
-            <div style="background:{message_bg_color}; color:white; border-radius:20px; padding:10px; margin-left:5px; max-width:75%; font-size:14px; margin:0; line-height:1.2; word-wrap:break-word;">
-                {message_text}
+            """
+        else:
+            container_html = f"""
+            <div style="display:flex; align-items:flex-start; justify-content:flex-start; margin:0; padding:0; margin-bottom:10px;">
+                <img src="{avatar_url}" class="{avatar_class}" alt="avatar" style="width:30px; height:30px; margin:0; margin-right:5px; margin-top:5px;" />
+                <div style="background:{message_bg_color}; color:white; border-radius:20px; padding:10px; margin-left:5px; max-width:75%; font-size:14px; margin:0; line-height:1.2; word-wrap:break-word;">
+                    {message_text}
+                </div>
             </div>
-        </div>
-        """
-
-    st.write(container_html, unsafe_allow_html=True)
+            """
+        st.write(container_html, unsafe_allow_html=True)
 
 
 
@@ -133,6 +133,8 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
     def _get_bot_message_container(self, text):
         """Generate the bot's message container style for the given text."""
         formatted_text = format_message(text.strip())
+        if not formatted_text:  # If no formatted text, show "Thinking..."
+            formatted_text = "Thinking..."
         container_content = f"""
         <div style="display:flex; align-items:flex-start; justify-content:flex-start; margin:0; padding:0;">
             <img src="{self.avatar_url}" class="bot-avatar" alt="avatar" style="width:30px; height:30px; margin:0;" />
@@ -142,9 +144,6 @@ class StreamlitUICallbackHandler(BaseCallbackHandler):
         </div>
         """
         return container_content
-
-
-
 
     def display_dataframe(self, df):
         """
