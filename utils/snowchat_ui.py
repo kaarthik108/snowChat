@@ -1,6 +1,5 @@
 import html
 import re
-import textwrap
 
 import streamlit as st
 from langchain.callbacks.base import BaseCallbackHandler

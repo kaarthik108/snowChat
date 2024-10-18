@@ -35,7 +35,7 @@ class ModelConfig:
 
 model_configurations = {
     "gpt-4o": ModelConfig(
-        model_name="gpt-4o", api_key=os.getenv("OPENAI_API_KEY")
+        model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"]
     ),
     "Gemini Flash 1.5 8B": ModelConfig(
         model_name="google/gemini-flash-1.5-8b",
@@ -43,16 +43,16 @@ model_configurations = {
         base_url="https://openrouter.ai/api/v1",
     ),
     "claude3-haiku": ModelConfig(
-        model_name="claude-3-haiku-20240307", api_key=os.getenv("ANTHROPIC_API_KEY")
+        model_name="claude-3-haiku-20240307", api_key=st.secrets["ANTHROPIC_API_KEY"]
     ),
     "llama-3.2-3b": ModelConfig(
         model_name="accounts/fireworks/models/llama-v3p2-3b-instruct",
-        api_key=os.getenv("FIREWORKS_API_KEY"),
+        api_key=st.secrets["FIREWORKS_API_KEY"],
         base_url="https://api.fireworks.ai/inference/v1",
     ),
     "llama-3.1-405b": ModelConfig(
         model_name="accounts/fireworks/models/llama-v3p1-405b-instruct",
-        api_key=os.getenv("FIREWORKS_API_KEY"),
+        api_key=st.secrets["FIREWORKS_API_KEY"],
         base_url="https://api.fireworks.ai/inference/v1",
     ),
 }
@@ -70,6 +70,8 @@ def create_agent(callback_handler: BaseCallbackHandler, model_name: str) -> Stat
     if not config:
         raise ValueError(f"Unsupported model name: {model_name}")
 
+    if not config.api_key:
+        raise ValueError(f"API key for model '{model_name}' is not set. Please check your environment variables or secrets configuration.")
 
     llm = (
         ChatOpenAI(

@@ -15,9 +15,11 @@
 
 ## Supported LLM's
 
-- GPT-3.5-turbo-0125
-- CodeLlama-70B
-- Mistral Medium
+- GPT-4o
+- Gemini Flash 1.5 8B
+- Claude 3 Haiku
+- Llama 3.2 3B
+- Llama 3.1 405B
 
 #
 
@@ -27,11 +29,12 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
 
 ## 🌟 Features
 
-- **Conversational AI**: Harnesses ChatGPT to translate natural language into precise SQL queries.
+- **Conversational AI**: Use ChatGPT and other models to translate natural language into precise SQL queries.
 - **Conversational Memory**: Retains context for interactive, dynamic responses.
 - **Snowflake Integration**: Offers seamless, real-time data insights straight from your Snowflake database.
 - **Self-healing SQL**: Proactively suggests solutions for SQL errors, streamlining data access.
 - **Interactive User Interface**: Transforms data querying into an engaging conversation, complete with a chat reset option.
+- **Agent-based Architecture**: Utilizes an agent to manage interactions and tool usage.
 
 ## 🛠️ Installation
 
@@ -42,7 +45,9 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
    cd snowchat
    pip install -r requirements.txt
 
-3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`, `WAREHOUSE`, `SUPABASE_URL` , `SUPABASE_SERVICE_KEY` and `REPLICATE_API_TOKEN` in project directory `secrets.toml`.
+3. Set up your `OPENAI_API_KEY`, `ACCOUNT`, `USER_NAME`, `PASSWORD`, `ROLE`, `DATABASE`, `SCHEMA`, `WAREHOUSE`, `SUPABASE_URL` , `SUPABASE_SERVICE_KEY`, `SUPABASE_STORAGE_URL`,`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_NAMESPACE_ID`,
+   `CLOUDFLARE_API_TOKEN` in project directory `secrets.toml`.
+   Cloudflare is used here for caching Snowflake responses in KV.
 
 4. Make you're schemas and store them in docs folder that matches you're database.
 
@@ -52,12 +57,6 @@ https://github.com/kaarthik108/snowChat/assets/53030784/24105e23-69d3-4676-b6d6-
 
 7. Run the Streamlit app to start chatting:
    streamlit run main.py
-
-## 🚀 Additional Enhancements
-
-1. **Platform Integration**: Connect snowChat with popular communication platforms like Slack or Discord for seamless interaction.
-2. **Voice Integration**: Implement voice recognition and text-to-speech functionality to make the chatbot more interactive and user-friendly.
-3. **Advanced Analytics**: Integrate with popular data visualization libraries like Plotly or Matplotlib to generate interactive visualizations based on the user's queries (AutoGPT).
 
 ## Star History
 
