@@ -35,5 +35,5 @@ def sql_executor_tool(query: str, use_cache: bool = True) -> str:
     conn = SnowflakeConnection()
     return conn.execute_query(query, use_cache)
 
-if __name__ == "__main__":
-    print(sql_executor_tool("select * from STREAM_HACKATHON.STREAMLIT.CUSTOMER_DETAILS"))
+# if __name__ == "__main__":
+#     print(sql_executor_tool("select * from STREAM_HACKATHON.STREAMLIT.CUSTOMER_DETAILS"))
