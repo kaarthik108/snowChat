@@ -5,7 +5,6 @@ langchain_core==0.3.12
 langchain_openai==0.2.2
 langchain-google-genai==2.0.1
 langgraph==0.2.38
-Pillow==11.0.0
 pydantic==2.9.2
 Requests==2.32.3
 snowflake_connector_python==3.1.0
