@@ -204,7 +204,7 @@ if (
         messages = [HumanMessage(content=user_input_content)]
 
         state = MessagesState(messages=messages)
-        result = react_graph.invoke(state, config=config)
+        result = react_graph.invoke(state, config=config, debug=True)
 
         if result["messages"]:
             assistant_message = callback_handler.final_message
