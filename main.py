@@ -60,10 +60,10 @@ if "toast_shown" not in st.session_state:
 if "rate-limit" not in st.session_state:
     st.session_state["rate-limit"] = False
 
-# Show the toast only if it hasn't been shown before
-if not st.session_state["toast_shown"]:
-    st.toast("The snowflake data retrieval is disabled for now.", icon="👋")
-    st.session_state["toast_shown"] = True
+# # Show the toast only if it hasn't been shown before
+# if not st.session_state["toast_shown"]:
+#     st.toast("The snowflake data retrieval is disabled for now.", icon="👋")
+#     st.session_state["toast_shown"] = True
 
 # Show a warning if the model is rate-limited
 if st.session_state["rate-limit"]:
