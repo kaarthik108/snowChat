@@ -12,3 +12,7 @@ snowflake_snowpark_python==1.5.0
 streamlit==1.33.0
 websocket_client==1.7.0
 duckduckgo_search==6.3.0
+supabase==2.4.1
+unstructured
+tiktoken
+pandas
