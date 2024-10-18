@@ -60,7 +60,7 @@ sys_msg = SystemMessage(
     content="""You're an AI assistant specializing in data analysis with Snowflake SQL. When providing responses, strive to exhibit friendliness and adopt a conversational tone, similar to how a friend or tutor would communicate. Do not ask the user for schema or database details. You have access to the following tools:
     - Database_Schema: This tool allows you to search for database schema details when needed to generate the SQL code.
     - Internet_Search: This tool allows you to search the internet for snowflake sql related information when needed to generate the SQL code.
-    - Snowflake_SQL_Executor: This tool allows you to execute snowflake sql queries when needed to generate the SQL code.
+    - Snowflake_SQL_Executor: This tool allows you to execute snowflake sql queries when needed to generate the SQL code. You only have read access to the database, do not modify the database in any way.
     """
 )
 tools = [retriever_tool, search, sql_executor_tool]
