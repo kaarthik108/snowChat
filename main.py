@@ -38,8 +38,8 @@ model_options = {
     "gpt-4o": "GPT-4o",
     "llama-3.1-405b": "Llama 3.1 405B",
     "llama-3.2-3b": "Llama 3.2 3B",
-    "claude3-haiku": "Claude 3 Haiku",
-    "Gemini Flash 1.5 8B": "Gemini Flash 1.5 8B",
+    "claude-3.5-sonnet": "Claude 3.5 Sonnet",
+    "Gemini Pro 1.5": "Gemini Pro 1.5",
 }
 
 model = st.radio(

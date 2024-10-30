@@ -35,15 +35,15 @@ class ModelConfig:
 
 model_configurations = {
     "gpt-4o": ModelConfig(
-        model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"]
+        model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"], base_url=f"https://gateway.ai.cloudflare.com/v1/{st.secrets['CLOUDFLARE_ACCOUNT_ID']}/snowchat/openai"
     ),
-    "Gemini Flash 1.5 8B": ModelConfig(
-        model_name="google/gemini-flash-1.5-8b",
+    "Gemini Pro 1.5": ModelConfig(
+        model_name="google/gemini-pro-1.5",
         api_key=st.secrets["OPENROUTER_API_KEY"],
         base_url="https://openrouter.ai/api/v1",
     ),
-    "claude3-haiku": ModelConfig(
-        model_name="claude-3-haiku-20240307", api_key=st.secrets["ANTHROPIC_API_KEY"]
+    "claude-3.5-sonnet": ModelConfig(
+        model_name="anthropic/claude-3.5-sonnet", api_key=st.secrets["OPENROUTER_API_KEY"], base_url="https://openrouter.ai/api/v1"
     ),
     "llama-3.2-3b": ModelConfig(
         model_name="accounts/fireworks/models/llama-v3p2-3b-instruct",
@@ -61,6 +61,8 @@ sys_msg = SystemMessage(
     - Database_Schema: This tool allows you to search for database schema details when needed to generate the SQL code.
     - Internet_Search: This tool allows you to search the internet for snowflake sql related information when needed to generate the SQL code.
     - Snowflake_SQL_Executor: This tool allows you to execute snowflake sql queries when needed to generate the SQL code. You only have read access to the database, do not modify the database in any way.
+
+    Make sure to always return both the SQL code and the result of the query
     """
 )
 tools = [retriever_tool, search, sql_executor_tool]
@@ -73,22 +75,14 @@ def create_agent(callback_handler: BaseCallbackHandler, model_name: str) -> Stat
     if not config.api_key:
         raise ValueError(f"API key for model '{model_name}' is not set. Please check your environment variables or secrets configuration.")
 
-    llm = (
-        ChatOpenAI(
-            model=config.model_name,
-            api_key=config.api_key,
-            callbacks=[callback_handler],
-            streaming=True,
-            base_url=config.base_url,
-            temperature=0.01,
-        )
-        if config.model_name != "claude-3-haiku-20240307"
-        else ChatAnthropic(
-            model=config.model_name,
-            api_key=config.api_key,
-            callbacks=[callback_handler],
-            streaming=True,
-        )
+    llm = ChatOpenAI(
+        model=config.model_name,
+        api_key=config.api_key,
+        callbacks=[callback_handler],
+        streaming=True,
+        base_url=config.base_url,
+        temperature=0.01,
+        default_headers={"HTTP-Referer": "https://snowchat.streamlit.app/", "X-Title": "Snowchat"},
     )
 
     llm_with_tools = llm.bind_tools(tools)
