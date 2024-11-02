@@ -35,10 +35,9 @@ st.markdown(gradient_text_html, unsafe_allow_html=True)
 st.caption("Talk your way through data")
 
 model_options = {
-    "gpt-4o": "GPT-4o",
+    "gpt-4o-mini": "GPT-4o Mini",
     "llama-3.1-405b": "Llama 3.1 405B",
     "llama-3.2-3b": "Llama 3.2 3B",
-    "claude-3.5-sonnet": "Claude 3.5 Sonnet",
     "Gemini Pro 1.5": "Gemini Pro 1.5",
 }
 
@@ -122,10 +121,11 @@ if "model" not in st.session_state:
 
 # Prompt for user input and save
 if prompt := st.chat_input():
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    st.session_state["assistant_response_processed"] = (
-        False  # Assistant response not yet processed
-    )
+    if len(prompt) > 500:
+        st.error("Input is too long! Please limit your message to 500 characters.")
+    else:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state["assistant_response_processed"] = False  # Assistant response not yet processed
 
 messages_to_display = st.session_state.messages.copy()
 # if not st.session_state["assistant_response_processed"]:

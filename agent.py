@@ -12,6 +12,7 @@ from langgraph.graph import START, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage
+from langchain_community.llms import Replicate
 
 from tools import retriever_tool
 from tools import search, sql_executor_tool
@@ -34,17 +35,17 @@ class ModelConfig:
 
 
 model_configurations = {
-    "gpt-4o": ModelConfig(
-        model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"], base_url=f"https://gateway.ai.cloudflare.com/v1/{st.secrets['CLOUDFLARE_ACCOUNT_ID']}/snowchat/openai"
+    "gpt-4o-mini": ModelConfig(
+        model_name="gpt-4o-mini", api_key=st.secrets["OPENAI_API_KEY"], base_url=f"https://gateway.ai.cloudflare.com/v1/{st.secrets['CLOUDFLARE_ACCOUNT_ID']}/snowchat/openai"
     ),
     "Gemini Pro 1.5": ModelConfig(
         model_name="google/gemini-pro-1.5",
         api_key=st.secrets["OPENROUTER_API_KEY"],
         base_url="https://openrouter.ai/api/v1",
     ),
-    "claude-3.5-sonnet": ModelConfig(
-        model_name="anthropic/claude-3.5-sonnet", api_key=st.secrets["OPENROUTER_API_KEY"], base_url="https://openrouter.ai/api/v1"
-    ),
+    # "Mistral 7B": ModelConfig(
+    #     model_name="mistralai/mistral-7b-v0.1", api_key=st.secrets["REPLICATE_API_TOKEN"]
+    # ),
     "llama-3.2-3b": ModelConfig(
         model_name="accounts/fireworks/models/llama-v3p2-3b-instruct",
         api_key=st.secrets["FIREWORKS_API_KEY"],
