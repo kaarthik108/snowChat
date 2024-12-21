@@ -35,10 +35,10 @@ st.markdown(gradient_text_html, unsafe_allow_html=True)
 st.caption("Talk your way through data")
 
 model_options = {
-    "gpt-4o-mini": "GPT-4o Mini",
-    "llama-3.1-405b": "Llama 3.1 405B",
-    "llama-3.2-3b": "Llama 3.2 3B",
+    "gpt-4o": "GPT-4o",
+    "llama-3.3-70b": "Llama 3.3 70B",
     "Gemini Pro 1.5": "Gemini Pro 1.5",
+    "Gemini Flash 1.5": "Gemini Flash 1.5",
 }
 
 model = st.radio(
