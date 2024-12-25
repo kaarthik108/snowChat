@@ -38,23 +38,23 @@ model_configurations = {
     "gpt-4o": ModelConfig(
         model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"], base_url=f"https://gateway.ai.cloudflare.com/v1/{st.secrets['CLOUDFLARE_ACCOUNT_ID']}/snowchat/openai"
     ),
-    "Gemini Pro 1.5": ModelConfig(
-        model_name="google/gemini-pro-1.5",
-        api_key=st.secrets["OPENROUTER_API_KEY"],
-        base_url="https://openrouter.ai/api/v1",
+    "Gemini Flash 1.5": ModelConfig(
+        model_name="gemini-1.5-flash",
+        api_key=st.secrets["GEMINI_API_KEY"],
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
     ),
     # "Mistral 7B": ModelConfig(
     #     model_name="mistralai/mistral-7b-v0.1", api_key=st.secrets["REPLICATE_API_TOKEN"]
     # ),
-    "llama-3.3-70b": ModelConfig(
-        model_name="accounts/fireworks/models/llama-v3p3-70b-instruct",
+    "Qwen 2.5": ModelConfig(
+        model_name="accounts/fireworks/models/qwen2p5-coder-32b-instruct",
         api_key=st.secrets["FIREWORKS_API_KEY"],
         base_url="https://api.fireworks.ai/inference/v1",
     ),
-    "Gemini Flash 1.5": ModelConfig(
-        model_name="google/gemini-flash-1.5",
-        api_key=st.secrets["OPENROUTER_API_KEY"],
-        base_url="https://openrouter.ai/api/v1",
+    "Gemini Exp 1206": ModelConfig(
+        model_name="gemini-exp-1206",
+        api_key=st.secrets["GEMINI_API_KEY"],
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
     ),
 }
 sys_msg = SystemMessage(

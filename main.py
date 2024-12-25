@@ -36,8 +36,8 @@ st.caption("Talk your way through data")
 
 model_options = {
     "gpt-4o": "GPT-4o",
-    "llama-3.3-70b": "Llama 3.3 70B",
-    "Gemini Pro 1.5": "Gemini Pro 1.5",
+    "Qwen 2.5": "Qwen 2.5",
+    "Gemini Exp 1206": "Gemini Exp 1206",
     "Gemini Flash 1.5": "Gemini Flash 1.5",
 }
 
