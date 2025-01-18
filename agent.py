@@ -36,7 +36,7 @@ class ModelConfig:
 
 model_configurations = {
     "gpt-4o": ModelConfig(
-        model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"], base_url=f"https://gateway.ai.cloudflare.com/v1/{st.secrets['CLOUDFLARE_ACCOUNT_ID']}/snowchat/openai"
+        model_name="gpt-4o", api_key=st.secrets["OPENAI_API_KEY"]
     ),
     "Gemini Flash 1.5": ModelConfig(
         model_name="gemini-1.5-flash",
