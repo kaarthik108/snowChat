@@ -12,13 +12,14 @@
         z-index: 100;
     }
     h1, h2 {
-    font-weight: bold;
-    background: -webkit-linear-gradient(left, red, orange);
-    background: linear-gradient(to right, red, orange);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline;
-    font-size: 3em;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 900;
+        font-size: 3em;
+        background: linear-gradient(90deg, #ff6a00, #ee0979);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        display: inline;
     }
     .user-avatar {
         float: right;

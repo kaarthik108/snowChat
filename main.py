@@ -17,17 +17,22 @@ snow_ddl = Snowddl()
 
 gradient_text_html = """
 <style>
-.gradient-text {
-    font-weight: bold;
-    background: -webkit-linear-gradient(left, red, orange);
-    background: linear-gradient(to right, red, orange);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline;
-    font-size: 3em;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap');
+
+.snowchat-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: 4em;
+  background: linear-gradient(90deg, #ff6a00, #ee0979);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
 }
 </style>
-<div class="gradient-text">snowChat</div>
+<div class="snowchat-title">snowChat</div>
 """
 
 st.markdown(gradient_text_html, unsafe_allow_html=True)
@@ -35,10 +40,10 @@ st.markdown(gradient_text_html, unsafe_allow_html=True)
 st.caption("Talk your way through data")
 
 model_options = {
-    "gpt-4o": "GPT-4o",
+    "o3-mini": "o3-mini",
     "Qwen 2.5": "Qwen 2.5",
     "Gemini Exp 1206": "Gemini Exp 1206",
-    "Gemini Flash 1.5": "Gemini Flash 1.5",
+    "Deepseek R1": "Deepseek R1",
 }
 
 model = st.radio(
@@ -69,8 +74,8 @@ if st.session_state["rate-limit"]:
     st.toast("Probably rate limited.. Go easy folks", icon="⚠️")
     st.session_state["rate-limit"] = False
 
-if st.session_state["model"] == "Mixtral 8x7B":
-    st.warning("This is highly rate-limited. Please use it sparingly", icon="⚠️")
+if st.session_state["model"] == "Deepseek R1":
+    st.warning("Deepseek R1 is highly rate limited. Please use it sparingly", icon="⚠️")
 
 INITIAL_MESSAGE = [
     {"role": "user", "content": "Hi!"},
