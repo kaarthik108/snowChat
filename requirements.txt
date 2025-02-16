@@ -1,12 +1,12 @@
 langchain==0.3.3
 langchain_community==0.3.2
-langchain_core==0.3.33
+# langchain_core==0.3.33
 langchain_openai==0.3.3
 langgraph==0.2.38
 pydantic==2.9.2
 Requests==2.32.3
-snowflake_connector_python==3.1.0
-snowflake_snowpark_python==1.5.0
+snowflake_connector_python
+snowflake_snowpark_python
 streamlit==1.33.0
 websocket_client==1.7.0
 duckduckgo_search==6.3.0

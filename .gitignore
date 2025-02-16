@@ -15,3 +15,8 @@ pplx.py
 test.json
 test.*
 app.py
+
+snowchat/
+
+env/
+.venv/

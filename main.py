@@ -2,9 +2,8 @@ import re
 import warnings
 
 import streamlit as st
-from langchain_core.messages import HumanMessage
 from snowflake.snowpark.exceptions import SnowparkSQLException
-
+from langchain_core.messages import HumanMessage
 from agent import MessagesState, create_agent
 
 # from utils.snow_connect import SnowflakeConnection
@@ -42,8 +41,8 @@ st.caption("Talk your way through data")
 model_options = {
     "o3-mini": "o3-mini",
     "Qwen 2.5": "Qwen 2.5",
-    "Gemini Exp 1206": "Gemini Exp 1206",
-    "Deepseek R1": "Deepseek R1",
+    "Gemini 2.0 Flash": "Gemini 2.0 Flash",
+    "Grok 2": "Grok 2",
 }
 
 model = st.radio(

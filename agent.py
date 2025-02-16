@@ -35,29 +35,25 @@ model_configurations = {
     "o3-mini": ModelConfig(
         model_name="o3-mini", api_key=st.secrets["OPENAI_API_KEY"]
     ),
-    "Deepseek R1": ModelConfig(
-        model_name="deepseek-r1-distill-llama-70b",
-        api_key=st.secrets["GROQ_API_KEY"],
-        base_url=f"https://api.groq.com/openai/v1",
+    "Grok 2": ModelConfig(
+        model_name="grok-2-latest",
+        api_key=st.secrets["XAI_API_KEY"],
+        base_url="https://api.x.ai/v1",
     ),
-    # "Mistral 7B": ModelConfig(
-    #     model_name="mistralai/mistral-7b-v0.1", api_key=st.secrets["REPLICATE_API_TOKEN"]
-    # ),
     "Qwen 2.5": ModelConfig(
         model_name="accounts/fireworks/models/qwen2p5-coder-32b-instruct",
         api_key=st.secrets["FIREWORKS_API_KEY"],
         base_url="https://api.fireworks.ai/inference/v1",
     ),
-    "Gemini Exp 1206": ModelConfig(
-        model_name="gemini-exp-1206",
+    "Gemini 2.0 Flash": ModelConfig(
+        model_name="gemini-2.0-flash",
         api_key=st.secrets["GEMINI_API_KEY"],
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
     ),
 }
 sys_msg = SystemMessage(
     content="""You're an AI assistant specializing in data analysis with Snowflake SQL. When providing responses, strive to exhibit friendliness and adopt a conversational tone, similar to how a friend or tutor would communicate. Do not ask the user for schema or database details. You have access to the following tools:
-    ALWAYS USE THE DATABASE_SCHEMA TOOL TO GET THE SCHEMA OF THE DATABASE BEFORE GENERATING SQL CODE.
-    ALWAYS USE THE DATABASE_SCHEMA TOOL TO GET THE SCHEMA OF THE DATABASE BEFORE GENERATING SQL CODE.
+    ALWAYS USE THE Database_Schema TOOL TO GET THE SCHEMA OF THE TABLE BEFORE GENERATING SQL CODE.
     - Database_Schema: This tool allows you to search for database schema details when needed to generate the SQL code.
     - Internet_Search: This tool allows you to search the internet for snowflake sql related information when needed to generate the SQL code.
     """
@@ -94,7 +90,7 @@ def create_agent(callback_handler: BaseCallbackHandler, model_name: str) -> Stat
     builder.add_edge(START, "llm_agent")
     builder.add_conditional_edges("llm_agent", tools_condition)
     builder.add_edge("tools", "llm_agent")
-    builder.add_edge("llm_agent", END)
+    # builder.add_edge("llm_agent", END)
     react_graph = builder.compile(checkpointer=memory)
 
     # png_data = react_graph.get_graph(xray=True).draw_mermaid_png()

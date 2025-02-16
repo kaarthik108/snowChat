@@ -20,6 +20,7 @@ meta_url = image_url + "meta-logo.webp?t=2024-05-07T21%3A18%3A12.286Z"
 snow_url = image_url + "Snowflake_idCkdSg0B6_6.png?t=2024-05-07T21%3A24%3A02.597Z"
 qwen_url = image_url + "qwen.png?t=2024-06-07T08%3A51%3A36.363Z"
 deepseek_url = image_url + "/deepseek-color.png"
+grok_url = image_url + "/xAI-logo.jpg"
 
 def get_model_url(model_name):
     if "qwen" in model_name.lower():
@@ -38,6 +39,8 @@ def get_model_url(model_name):
         return gemini_url
     elif "deepseek" in model_name.lower():
         return deepseek_url
+    elif "grok" in model_name.lower():
+        return grok_url
     return mistral_url
 
 
